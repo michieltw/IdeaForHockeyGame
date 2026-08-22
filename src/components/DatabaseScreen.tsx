@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, CheckCircle, XCircle, Database, Loader2, Save, Copy } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, Database, Loader2, Save, Copy, Key } from 'lucide-react';
 
 interface DatabaseScreenProps {
   onBack: () => void;
 }
 
-const GAS_CODE_SNIPPET = `function setupSheet() {
+const getGasCodeSnippet = (secret: string) => `function setupSheet() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
   // Settings Tab
@@ -248,6 +248,12 @@ function doPost(e) {
     // Parse the data
     const data = JSON.parse(e.postData.contents);
 
+    // Verify secret token for writes
+    const expectedSecret = "${secret}";
+    if (data.secret !== expectedSecret) {
+      return ContentService.createTextOutput(JSON.stringify({error: "Unauthorized"})).setMimeType(ContentService.MimeType.JSON);
+    }
+
     if (data.action === 'saveGame' || data.logs) {
       const logsSheet = ss.getSheetByName("ActionLogs");
       if (!logsSheet) throw new Error("ActionLogs sheet niet gevonden");
@@ -288,6 +294,7 @@ function doPost(e) {
 
 export default function DatabaseScreen({ onBack }: DatabaseScreenProps) {
   const [gasUrl, setGasUrl] = useState('');
+  const [gasSecret, setGasSecret] = useState('');
   const [status, setStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
   const [copied, setCopied] = useState(false);
 
@@ -295,6 +302,14 @@ export default function DatabaseScreen({ onBack }: DatabaseScreenProps) {
     const savedUrl = localStorage.getItem('blackout_gas_url');
     if (savedUrl) {
       setGasUrl(savedUrl);
+    }
+    const savedSecret = localStorage.getItem('blackout_gas_secret');
+    if (savedSecret) {
+      setGasSecret(savedSecret);
+    } else {
+      const newSecret = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
+      setGasSecret(newSecret);
+      localStorage.setItem('blackout_gas_secret', newSecret);
     }
   }, []);
 
@@ -333,11 +348,12 @@ export default function DatabaseScreen({ onBack }: DatabaseScreenProps) {
 
   const handleSave = () => {
     localStorage.setItem('blackout_gas_url', gasUrl);
+    localStorage.setItem('blackout_gas_secret', gasSecret);
     testConnection(gasUrl);
   };
 
   const handleCopyCode = () => {
-    navigator.clipboard.writeText(GAS_CODE_SNIPPET);
+    navigator.clipboard.writeText(getGasCodeSnippet(gasSecret));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -376,6 +392,23 @@ export default function DatabaseScreen({ onBack }: DatabaseScreenProps) {
               value={gasUrl}
               onChange={(e) => setGasUrl(e.target.value)}
               placeholder="https://script.google.com/macros/s/..."
+              className="w-full bg-[#050505] border border-[#333] rounded-md px-3 py-3 text-white text-sm font-mono placeholder:text-gray-600 focus:outline-none focus:border-tertiary/50 transition-colors"
+            />
+          </div>
+
+          <div className="flex items-center gap-3 text-tertiary mt-4">
+            <Key className="w-6 h-6" />
+            <h2 className="font-mono text-[14px] font-bold tracking-widest uppercase">API Secret</h2>
+          </div>
+          <p className="text-on-surface-variant text-sm leading-relaxed">
+            Dit is de geheime sleutel die wordt gebruikt om data veilig naar de database te schrijven.
+          </p>
+          <div className="flex flex-col gap-2 mt-2">
+            <input
+              type="text"
+              value={gasSecret}
+              onChange={(e) => setGasSecret(e.target.value)}
+              placeholder="Jouw geheime sleutel"
               className="w-full bg-[#050505] border border-[#333] rounded-md px-3 py-3 text-white text-sm font-mono placeholder:text-gray-600 focus:outline-none focus:border-tertiary/50 transition-colors"
             />
           </div>
@@ -438,7 +471,7 @@ export default function DatabaseScreen({ onBack }: DatabaseScreenProps) {
               </button>
             </div>
             <pre className="bg-[#050505] p-4 rounded-md border border-[#333] overflow-x-auto text-[11px] md:text-xs font-mono text-gray-300">
-              <code>{GAS_CODE_SNIPPET}</code>
+              <code>{getGasCodeSnippet(gasSecret)}</code>
             </pre>
           </div>
         </div>

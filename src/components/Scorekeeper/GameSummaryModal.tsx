@@ -176,6 +176,7 @@ export default function GameSummaryModal({
 
     // Push to Google Sheets database if configured
     const gasUrl = localStorage.getItem('blackout_gas_url');
+    const gasSecret = localStorage.getItem('blackout_gas_secret') || '';
     if (gasUrl && !isFinalized) {
       try {
         const gameId = `${now}_${cleanHome}_${cleanAway}_${Date.now()}`;
@@ -212,7 +213,7 @@ export default function GameSummaryModal({
         await fetch(gasUrl, {
           method: 'POST',
           mode: 'no-cors',
-          body: JSON.stringify({ action: 'saveGame', logs, game })
+          body: JSON.stringify({ action: 'saveGame', logs, game, secret: gasSecret })
         });
       } catch (err) {
         console.error("Failed to push to database:", err);
