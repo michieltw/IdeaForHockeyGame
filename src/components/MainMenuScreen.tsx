@@ -1,6 +1,6 @@
 import { getGasUrl } from '../utils/gasUrl';
 import { useState, useRef, useEffect } from 'react';
-import { Play, Download, Upload, LogOut, User as UserIcon, Database as DatabaseIcon, CheckCircle, XCircle, Trophy, Globe, Users } from 'lucide-react';
+import { Play, Download, Upload, LogOut, User as UserIcon, Database as DatabaseIcon, CheckCircle, XCircle, Trophy, Globe, Users, Shield, Wrench, RefreshCcw } from 'lucide-react';
 import { defaultSettingsContract } from '../settingsContract';
 import { User } from '../types';
 
@@ -14,9 +14,12 @@ interface MainMenuScreenProps {
   onEcosystem?: () => void;
   onMyProfile?: () => void;
   onPeopleDirectory?: () => void;
+  onTeamProfile?: () => void;
+  onRosterBuilder?: () => void;
+  onFreeAgency?: () => void;
 }
 
-export default function MainMenuScreen({ currentUser, onNewGame, onStartScheduledGame, onLogout, onDatabase, onStats, onEcosystem, onMyProfile, onPeopleDirectory }: MainMenuScreenProps) {
+export default function MainMenuScreen({ currentUser, onNewGame, onStartScheduledGame, onLogout, onDatabase, onStats, onEcosystem, onMyProfile, onPeopleDirectory, onTeamProfile, onRosterBuilder, onFreeAgency }: MainMenuScreenProps) {
   const [scheduledGames, setScheduledGames] = useState<any[]>([]);
 
   useEffect(() => {
@@ -376,6 +379,31 @@ export default function MainMenuScreen({ currentUser, onNewGame, onStartSchedule
             >
               <Users className="w-5 h-5 text-tertiary" />
               PEOPLE DIRECTORY
+            </button>
+          </div>
+
+          {/* Phase 3 Features */}
+          <div className="flex gap-3 w-full mt-1">
+            <button
+              onClick={onTeamProfile}
+              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
+            >
+              <Shield className="w-4 h-4 text-tertiary" />
+              Teams
+            </button>
+            <button
+              onClick={onRosterBuilder}
+              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
+            >
+              <Wrench className="w-4 h-4 text-tertiary" />
+              Rosters
+            </button>
+            <button
+              onClick={onFreeAgency}
+              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
+            >
+              <RefreshCcw className="w-4 h-4 text-tertiary" />
+              Free Agency
             </button>
           </div>
 

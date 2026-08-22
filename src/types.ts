@@ -1,4 +1,20 @@
-export type Screen = 'splash' | 'main-menu' | 'settings' | 'scorekeeper' | 'database' | 'stats' | 'ecosystem' | 'my-profile' | 'people-directory';
+export type Screen = 'splash' | 'main-menu' | 'settings' | 'scorekeeper' | 'database' | 'stats' | 'ecosystem' | 'my-profile' | 'people-directory' | 'team-profile' | 'roster-builder' | 'free-agency';
+
+export interface Team {
+  id: string;
+  clubId: string;
+  divisionId: string;
+  seasonId: string;
+  parentTeamId?: string;
+  name?: string;
+}
+
+export interface Roster {
+  id: string;
+  personId: string;
+  teamId: string;
+  seasonId: string;
+}
 
 export interface User {
   id: string;

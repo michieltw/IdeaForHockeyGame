@@ -8,6 +8,9 @@ import StatsScreen from './components/StatsScreen';
 import EcosystemScreen from './components/Ecosystem/EcosystemScreen';
 import MyProfileScreen from './components/MyProfileScreen';
 import PeopleDirectoryScreen from './components/PeopleDirectoryScreen';
+import TeamProfileScreen from './components/TeamProfileScreen';
+import RosterBuilderScreen from './components/RosterBuilderScreen';
+import FreeAgencyScreen from './components/FreeAgencyScreen';
 import { Screen, Player, User } from './types';
 import { defaultSettingsContract } from './settingsContract';
 
@@ -57,7 +60,22 @@ export default function App() {
           onEcosystem={() => setCurrentScreen('ecosystem')}
           onMyProfile={() => setCurrentScreen('my-profile')}
           onPeopleDirectory={() => setCurrentScreen('people-directory')}
+          onTeamProfile={() => setCurrentScreen('team-profile')}
+          onRosterBuilder={() => setCurrentScreen('roster-builder')}
+          onFreeAgency={() => setCurrentScreen('free-agency')}
         />
+      )}
+
+      {currentScreen === 'team-profile' && (
+        <TeamProfileScreen onBack={() => setCurrentScreen('main-menu')} />
+      )}
+
+      {currentScreen === 'roster-builder' && (
+        <RosterBuilderScreen onBack={() => setCurrentScreen('main-menu')} />
+      )}
+
+      {currentScreen === 'free-agency' && (
+        <FreeAgencyScreen onBack={() => setCurrentScreen('main-menu')} />
       )}
 
       {currentScreen === 'my-profile' && (
