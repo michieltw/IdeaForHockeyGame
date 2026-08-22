@@ -1,8 +1,14 @@
 import { getGasUrl } from '../utils/gasUrl';
 import { useState, useEffect } from 'react';
-import { Play, Users, ArrowLeft, ChevronDown, ChevronUp } from 'lucide-react';
+import { Play, ArrowLeft } from 'lucide-react';
 import { GameConfig, Player } from '../types';
 import RosterModal from './RosterModal';
+import { Row, Toggle } from './Settings/SettingsUI';
+import { TeamsSection } from './Settings/TeamsSection';
+import { MatchStartSection } from './Settings/MatchStartSection';
+import { GameClockSection } from './Settings/GameClockSection';
+import { TrackingStatsSection } from './Settings/TrackingStatsSection';
+import { PenaltiesSection } from './Settings/PenaltiesSection';
 
 // 1. HET CONTRACT (Hierin staan alle definities en beginwaarden)
 export interface SettingsContract {
@@ -107,60 +113,6 @@ interface SettingsScreenProps {
   onStart: () => void;
   onBack: () => void;
 }
-
-const Section = ({ title, children, defaultExpanded = true }: { title: string, children: React.ReactNode, defaultExpanded?: boolean }) => {
-  const [expanded, setExpanded] = useState(defaultExpanded);
-  return (
-    <section className="flex flex-col gap-2">
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="flex items-center justify-between w-full hover:opacity-80 transition-opacity"
-      >
-        <h2 className="font-mono text-[12px] font-bold text-tertiary tracking-widest uppercase">{title}</h2>
-        {expanded ? <ChevronUp className="w-4 h-4 text-tertiary" /> : <ChevronDown className="w-4 h-4 text-tertiary" />}
-      </button>
-      {expanded && (
-        <div className="bg-card-gradient metallic-border rounded-lg p-4 inner-glow flex flex-col gap-4 mt-2">
-          {children}
-        </div>
-      )}
-    </section>
-  );
-};
-
-const Row = ({ label, children, border = true, disabled = false }: { label: string, children: React.ReactNode, border?: boolean, disabled?: boolean }) => (
-  <div className={`flex justify-between items-center py-2 ${border ? 'border-b border-outline-variant/30' : ''} ${disabled ? 'opacity-50 pointer-events-none' : ''}`}>
-    <span className="text-[18px] text-on-background">{label}</span>
-    {children}
-  </div>
-);
-
-const Select = ({ options, value, onChange, className = "w-32", disabled = false }: { options: string[], value?: string, onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void, className?: string, disabled?: boolean }) => (
-  <select
-    className={`bg-[#050505] border border-[#2A2A2A] rounded p-2 text-on-background text-[16px] outline-none input-focus pr-8 appearance-none ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-    value={value}
-    onChange={onChange}
-    disabled={disabled}
-    style={{
-      backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%238e9192' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-      backgroundPosition: 'right 0.5rem center',
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: '1.5em 1.5em'
-    }}
-  >
-    {options.map(o => <option key={o} value={o}>{o}</option>)}
-  </select>
-);
-
-const Toggle = ({ checked, onChange, disabled = false }: { checked?: boolean, onChange?: () => void, disabled?: boolean }) => (
-  <button
-    className={`w-12 h-6 rounded-full relative transition-colors duration-200 ${checked && !disabled ? 'bg-tertiary' : 'bg-surface-container-highest border border-outline-variant'} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-    onClick={disabled ? undefined : onChange}
-    disabled={disabled}
-  >
-    <div className={`absolute top-1 w-4 h-4 rounded-full transition-all ${checked && !disabled ? 'right-1 bg-black' : 'left-1 bg-outline'}`}></div>
-  </button>
-);
 
 export default function SettingsScreen({ scheduledGameData, contract, onStart, onBack }: SettingsScreenProps) {
 
@@ -524,256 +476,77 @@ export default function SettingsScreen({ scheduledGameData, contract, onStart, o
 
       <main className="flex-1 w-full max-w-4xl mx-auto px-4 md:px-12 py-6 flex flex-col gap-10">
 
-        {/* Teams & Roster */}
-        <Section title="TEAMS & ROSTER">
-          <Row label="Team Selection" border={false}><Select options={contract.teamSelectionOptions} value={teamSelection} onChange={(e) => setTeamSelection(e.target.value)} className="w-48" /></Row>
+        <TeamsSection
+          contract={contract}
+          teamSelection={teamSelection}
+          setTeamSelection={setTeamSelection}
+          homeTeam={homeTeam}
+          setHomeTeam={setHomeTeam}
+          homeColor={homeColor}
+          setHomeColor={setHomeColor}
+          homeLogo={homeLogo}
+          setHomeLogo={setHomeLogo}
+          homeRosterLength={homeRoster.length}
+          awayTeam={awayTeam}
+          setAwayTeam={setAwayTeam}
+          awayColor={awayColor}
+          setAwayColor={setAwayColor}
+          awayLogo={awayLogo}
+          setAwayLogo={setAwayLogo}
+          awayRosterLength={awayRoster.length}
+          setActiveRosterModal={setActiveRosterModal}
+        />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-                {/* Home Team */}
-                <div className="bg-surface-container-low border border-[#2A2A2A] rounded-lg p-4 flex flex-col gap-2">
-                  <label className="font-mono text-[12px] font-bold text-on-surface-variant tracking-widest uppercase">HOME TEAM</label>
-                  {teamSelection === contract.customTeamSelectionMode ? (
-                    <input className="w-full bg-[#050505] border border-[#2A2A2A] rounded p-2 text-on-background font-display font-bold uppercase outline-none input-focus" value={homeTeam} onChange={(e) => setHomeTeam(e.target.value)} />
-                  ) : (
-                    <Select options={contract.homeTeamOptions} value={homeTeam} onChange={(e) => setHomeTeam(e.target.value)} className="w-full font-display font-bold uppercase" />
-                  )}
-                  <div className="flex gap-2 items-center mt-2">
-                    <input type="color" className="w-8 h-8 rounded p-0 border-0 bg-transparent shrink-0 cursor-pointer" value={homeColor} onChange={(e) => setHomeColor(e.target.value)} />
-                    <input className="flex-1 bg-[#050505] border border-[#2A2A2A] rounded p-2 text-on-background text-sm outline-none input-focus" placeholder="Logo URL" type="text" value={homeLogo} onChange={(e) => setHomeLogo(e.target.value)} />
-                  </div>
-                  <button
-                    onClick={() => setActiveRosterModal({ isHome: true })}
-                    className="mt-2 w-full bg-surface-container-high border border-outline-variant text-primary py-2 rounded flex items-center justify-between px-3 hover:bg-surface-container-highest transition-colors text-xs font-bold"
-                  >
-                    <span className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-blue-400" /> Open Roster
-                    </span>
-                    <span className="bg-blue-500/20 text-blue-300 font-mono text-[10px] px-2 py-0.5 rounded-full">
-                      {homeRoster.length} spelers
-                    </span>
-                  </button>
-                </div>
+        <MatchStartSection
+          contract={contract}
+          initialScoreHome={initialScoreHome}
+          setInitialScoreHome={setInitialScoreHome}
+          initialScoreAway={initialScoreAway}
+          setInitialScoreAway={setInitialScoreAway}
+          initialSogHome={initialSogHome}
+          setInitialSogHome={setInitialSogHome}
+          initialSogAway={initialSogAway}
+          setInitialSogAway={setInitialSogAway}
+          initialPeriod={initialPeriod}
+          setInitialPeriod={setInitialPeriod}
+        />
 
-                {/* Away Team */}
-                <div className="bg-surface-container-low border border-[#2A2A2A] rounded-lg p-4 flex flex-col gap-2">
-                  <label className="font-mono text-[12px] font-bold text-on-surface-variant tracking-widest uppercase">AWAY TEAM</label>
-                  {teamSelection === contract.customTeamSelectionMode ? (
-                    <input className="w-full bg-[#050505] border border-[#2A2A2A] rounded p-2 text-on-background font-display font-bold uppercase outline-none input-focus" value={awayTeam} onChange={(e) => setAwayTeam(e.target.value)} />
-                  ) : (
-                    <Select options={contract.awayTeamOptions} value={awayTeam} onChange={(e) => setAwayTeam(e.target.value)} className="w-full font-display font-bold uppercase" />
-                  )}
-                  <div className="flex gap-2 items-center mt-2">
-                    <input type="color" className="w-8 h-8 rounded p-0 border-0 bg-transparent shrink-0 cursor-pointer" value={awayColor} onChange={(e) => setAwayColor(e.target.value)} />
-                    <input className="flex-1 bg-[#050505] border border-[#2A2A2A] rounded p-2 text-on-background text-sm outline-none input-focus" placeholder="Logo URL" type="text" value={awayLogo} onChange={(e) => setAwayLogo(e.target.value)} />
-                  </div>
-                  <button
-                    onClick={() => setActiveRosterModal({ isHome: false })}
-                    className="mt-2 w-full bg-surface-container-high border border-outline-variant text-primary py-2 rounded flex items-center justify-between px-3 hover:bg-surface-container-highest transition-colors text-xs font-bold"
-                  >
-                    <span className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-red-400" /> Open Roster
-                    </span>
-                    <span className="bg-red-500/20 text-red-300 font-mono text-[10px] px-2 py-0.5 rounded-full">
-                      {awayRoster.length} spelers
-                    </span>
-                  </button>
-                </div>
-              </div>
-        </Section>
+        <GameClockSection
+          contract={contract}
+          gameClock={gameClock}
+          setGameClock={setGameClock}
+          clockPauseBehavior={clockPauseBehavior}
+          setClockPauseBehavior={setClockPauseBehavior}
+          autoStopAtPeriodEnd={autoStopAtPeriodEnd}
+          setAutoStopAtPeriodEnd={setAutoStopAtPeriodEnd}
+          p1Input={p1Input}
+          setP1Input={setP1Input}
+          setPeriodLength={setPeriodLength}
+        />
 
-            {/* Match Start State / Beginwaarden */}
-            <Section title="BEGINWAARDEN WEDSTRIJD" defaultExpanded={false}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-2">
-                {/* Score */}
-                <div className="flex flex-col gap-3">
-                  <span className="font-mono text-[12px] font-bold text-on-surface-variant tracking-widest uppercase">SCORE BIJ START</span>
-                  <div className="flex gap-4 items-center bg-[#050505] border border-[#2A2A2A] rounded-lg p-3 justify-center">
-                    <div className="flex flex-col items-center gap-1">
-                      <span className="text-[11px] text-on-surface-variant font-semibold">HOME</span>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => setInitialScoreHome(prev => Math.max(0, prev - 1))}
-                          className="w-8 h-8 rounded bg-surface-container-high hover:bg-surface-container-highest flex items-center justify-center font-bold text-lg text-primary transition-colors select-none active:scale-90"
-                        >
-                          -
-                        </button>
-                        <input
-                          type="number"
-                          value={initialScoreHome}
-                          onChange={(e) => setInitialScoreHome(Math.max(0, parseInt(e.target.value) || 0))}
-                          className="w-12 bg-transparent text-center font-display font-bold text-[20px] text-on-background outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        />
-                        <button
-                          onClick={() => setInitialScoreHome(prev => prev + 1)}
-                          className="w-8 h-8 rounded bg-surface-container-high hover:bg-surface-container-highest flex items-center justify-center font-bold text-lg text-primary transition-colors select-none active:scale-90"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                    <span className="text-on-surface-variant font-display font-bold text-xl px-1">-</span>
-                    <div className="flex flex-col items-center gap-1">
-                      <span className="text-[11px] text-on-surface-variant font-semibold">AWAY</span>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => setInitialScoreAway(prev => Math.max(0, prev - 1))}
-                          className="w-8 h-8 rounded bg-surface-container-high hover:bg-surface-container-highest flex items-center justify-center font-bold text-lg text-primary transition-colors select-none active:scale-90"
-                        >
-                          -
-                        </button>
-                        <input
-                          type="number"
-                          value={initialScoreAway}
-                          onChange={(e) => setInitialScoreAway(Math.max(0, parseInt(e.target.value) || 0))}
-                          className="w-12 bg-transparent text-center font-display font-bold text-[20px] text-on-background outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        />
-                        <button
-                          onClick={() => setInitialScoreAway(prev => prev + 1)}
-                          className="w-8 h-8 rounded bg-surface-container-high hover:bg-surface-container-highest flex items-center justify-center font-bold text-lg text-primary transition-colors select-none active:scale-90"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+        <TrackingStatsSection
+          trackIcing={trackIcing}
+          setTrackIcing={setTrackIcing}
+          trackOffside={trackOffside}
+          setTrackOffside={setTrackOffside}
+          trackSOG={trackSOG}
+          setTrackSOG={setTrackSOG}
+          trackSOGLocation={trackSOGLocation}
+          setTrackSOGLocation={setTrackSOGLocation}
+          trackFOW={trackFOW}
+          setTrackFOW={setTrackFOW}
+          faceoffLocation={faceoffLocation}
+          setFaceoffLocation={setFaceoffLocation}
+        />
 
-                {/* Shots on Goal */}
-                <div className="flex flex-col gap-3">
-                  <span className="font-mono text-[12px] font-bold text-on-surface-variant tracking-widest uppercase">SOG BIJ START</span>
-                  <div className="flex gap-4 items-center bg-[#050505] border border-[#2A2A2A] rounded-lg p-3 justify-center">
-                    <div className="flex flex-col items-center gap-1">
-                      <span className="text-[11px] text-on-surface-variant font-semibold">HOME</span>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => setInitialSogHome(prev => Math.max(0, prev - 1))}
-                          className="w-8 h-8 rounded bg-surface-container-high hover:bg-surface-container-highest flex items-center justify-center font-bold text-lg text-primary transition-colors select-none active:scale-90"
-                        >
-                          -
-                        </button>
-                        <input
-                          type="number"
-                          value={initialSogHome}
-                          onChange={(e) => setInitialSogHome(Math.max(0, parseInt(e.target.value) || 0))}
-                          className="w-12 bg-transparent text-center font-display font-bold text-[20px] text-on-background outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        />
-                        <button
-                          onClick={() => setInitialSogHome(prev => prev + 1)}
-                          className="w-8 h-8 rounded bg-surface-container-high hover:bg-surface-container-highest flex items-center justify-center font-bold text-lg text-primary transition-colors select-none active:scale-90"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                    <span className="text-on-surface-variant font-display font-bold text-xl px-1">-</span>
-                    <div className="flex flex-col items-center gap-1">
-                      <span className="text-[11px] text-on-surface-variant font-semibold">AWAY</span>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => setInitialSogAway(prev => Math.max(0, prev - 1))}
-                          className="w-8 h-8 rounded bg-surface-container-high hover:bg-surface-container-highest flex items-center justify-center font-bold text-lg text-primary transition-colors select-none active:scale-90"
-                        >
-                          -
-                        </button>
-                        <input
-                          type="number"
-                          value={initialSogAway}
-                          onChange={(e) => setInitialSogAway(Math.max(0, parseInt(e.target.value) || 0))}
-                          className="w-12 bg-transparent text-center font-display font-bold text-[20px] text-on-background outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        />
-                        <button
-                          onClick={() => setInitialSogAway(prev => prev + 1)}
-                          className="w-8 h-8 rounded bg-surface-container-high hover:bg-surface-container-highest flex items-center justify-center font-bold text-lg text-primary transition-colors select-none active:scale-90"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <Row label="Start Periode" border={false}>
-                <Select
-                  options={contract.initialPeriodOptions}
-                  value={contract.initialPeriodOptions[initialPeriod - 1] || contract.initialPeriodOptions[0]}
-                  onChange={(e) => {
-                    const selectedIndex = contract.initialPeriodOptions.indexOf(e.target.value);
-                    setInitialPeriod(selectedIndex !== -1 ? selectedIndex + 1 : contract.defaultInitialPeriod);
-                  }}
-                  className="w-48 font-semibold"
-                />
-              </Row>
-            </Section>
-
-            {/* Game Clock */}
-            <Section title="GAME CLOCK">
-              <Row label="Game Clock"><Toggle checked={gameClock} onChange={() => setGameClock(!gameClock)} /></Row>
-              <Row label="Clock Pause Behavior" disabled={!gameClock}><Select disabled={!gameClock} options={contract.clockBehaviorOptions} value={clockPauseBehavior} onChange={(e) => setClockPauseBehavior(e.target.value)} className="w-40" /></Row>
-              <Row label="Auto Stop at Period End" border={false} disabled={!gameClock}><Select disabled={!gameClock} options={contract.yesNoOptions} value={autoStopAtPeriodEnd} onChange={(e) => setAutoStopAtPeriodEnd(e.target.value)} className="w-32" /></Row>
-
-              <div className={`grid grid-cols-2 md:grid-cols-4 gap-4 py-2 ${!gameClock ? 'opacity-50 pointer-events-none' : ''}`}>
-                {contract.periodBlocks.map((block) => (
-                  <div key={block.id} className="flex flex-col gap-1">
-                    <label className="font-mono text-[10px] font-bold text-on-surface-variant uppercase">{block.label}</label>
-                    {block.id === 'p1' ? (
-                      <input
-                        className="w-full bg-[#050505] border border-[#2A2A2A] rounded p-2 text-on-background text-center font-display font-bold text-[24px] input-focus outline-none"
-                        type="text"
-                        value={p1Input}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setP1Input(val);
-                          const parts = val.split(':');
-                          if (parts.length > 0) {
-                            const mins = parseInt(parts[0], 10);
-                            if (!isNaN(mins)) {
-                              setPeriodLength(mins);
-                            }
-                          }
-                        }}
-                      />
-                    ) : (
-                      <input
-                        className="w-full bg-[#050505] border border-[#2A2A2A] rounded p-2 text-on-background text-center font-display font-bold text-[24px] input-focus outline-none"
-                        type="text"
-                        defaultValue={block.defaultTime}
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </Section>
-
-            {/* Tracking & Stats */}
-            <Section title="TRACKING & STATS">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
-                <Row label="Icing"><Toggle checked={trackIcing} onChange={() => setTrackIcing(!trackIcing)} /></Row>
-                <Row label="Offside"><Toggle checked={trackOffside} onChange={() => setTrackOffside(!trackOffside)} /></Row>
-                <Row label="SOG"><Toggle checked={trackSOG} onChange={() => {
-                  const newVal = !trackSOG;
-                  setTrackSOG(newVal);
-                  if (!newVal) {
-                    setTrackSOGLocation(false);
-                  }
-                }} /></Row>
-                <Row label="SOG Location" disabled={!trackSOG}><Toggle disabled={!trackSOG} checked={trackSOGLocation && trackSOG} onChange={() => setTrackSOGLocation(!trackSOGLocation)} /></Row>
-                <Row label="FOW"><Toggle checked={trackFOW} onChange={() => {
-                  const newVal = !trackFOW;
-                  setTrackFOW(newVal);
-                  if (!newVal) {
-                    setFaceoffLocation(false);
-                  }
-                }} /></Row>
-                <Row label="Faceoff Location" disabled={!trackFOW}><Toggle disabled={!trackFOW} checked={faceoffLocation && trackFOW} onChange={() => setFaceoffLocation(!faceoffLocation)} /></Row>
-              </div>
-            </Section>
-
-            {/* Penalties */}
-            <Section title="PENALTIES">
-              <Row label="Penalties"><Toggle checked={trackPenalties} onChange={() => setTrackPenalties(!trackPenalties)} /></Row>
-              <Row label="Penalty Clock" border={false} disabled={!trackPenalties || !gameClock}><Select disabled={!trackPenalties || !gameClock} options={contract.penaltyClockOptions} value={penaltyClock} onChange={(e) => setPenaltyClock(e.target.value)} className="w-36" /></Row>
-            </Section>
+        <PenaltiesSection
+          contract={contract}
+          trackPenalties={trackPenalties}
+          setTrackPenalties={setTrackPenalties}
+          gameClock={gameClock}
+          penaltyClock={penaltyClock}
+          setPenaltyClock={setPenaltyClock}
+        />
 
             {/* System */}
             <section className="flex flex-col gap-4">

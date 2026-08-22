@@ -299,6 +299,7 @@ function doPost(e) {
 export default function DatabaseScreen({ onBack }: DatabaseScreenProps) {
   const [gasUrl, setGasUrl] = useState('');
   const [gasToken, setGasToken] = useState('');
+  const [gasSecret, setGasSecret] = useState('');
   const [status, setStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
   const [copied, setCopied] = useState(false);
 
