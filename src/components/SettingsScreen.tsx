@@ -249,38 +249,39 @@ export default function SettingsScreen({ scheduledGameData, contract, onStart, o
         const gasUrl = localStorage.getItem('blackout_gas_url');
         if (gasUrl) {
           try {
-            // Also fetch teams
-            fetch(`${gasUrl}?action=getTeams`).then(r => r.json()).then(teamsData => {
-              if (Array.isArray(teamsData) && teamsData.length > 1) {
-                const teamMap: Record<string, Player[]> = {};
-                for (let i = 1; i < teamsData.length; i++) {
-                  const row = teamsData[i];
-                  if (!row || row.length < 5) continue;
-                  const [tName, pId, pNum, pName, pPos] = row;
-                  if (!tName) continue;
-                  if (!teamMap[tName]) teamMap[tName] = [];
-                  teamMap[tName].push({ id: pId || Date.now().toString() + i, number: pNum || '', name: pName || '', position: pPos || '' });
-                }
+            // Fetch teams and settings concurrently
+            const teamsPromise = fetch(`${gasUrl}?action=getTeams`).then(r => r.json()).catch(console.error);
+            const settingsPromise = fetch(`${gasUrl}?action=getSettings`).then(r => r.json()).catch(console.error);
 
-                // If the selected homeTeam is in the map, and we haven't overridden it yet from savedConfig, set it
-                setHomeRoster(prev => {
-                  const ht = scheduledGameData?.homeTeam || contract.defaultHomeTeam;
-                  return teamMap[ht] || prev;
-                });
-                setAwayRoster(prev => {
-                  const at = scheduledGameData?.awayTeam || contract.defaultAwayTeam;
-                  return teamMap[at] || prev;
-                });
+            const [teamsData, data] = await Promise.all([teamsPromise, settingsPromise]);
 
-                // Keep teamMap around if we want to auto-update when team changes
-                (window as any)._remoteTeamMap = teamMap;
+            if (teamsData && Array.isArray(teamsData) && teamsData.length > 1) {
+              const teamMap: Record<string, Player[]> = {};
+              for (let i = 1; i < teamsData.length; i++) {
+                const row = teamsData[i];
+                if (!row || row.length < 5) continue;
+                const [tName, pId, pNum, pName, pPos] = row;
+                if (!tName) continue;
+                if (!teamMap[tName]) teamMap[tName] = [];
+                teamMap[tName].push({ id: pId || Date.now().toString() + i, number: pNum || '', name: pName || '', position: pPos || '' });
               }
-            }).catch(console.error);
 
-            const res = await fetch(`${gasUrl}?action=getSettings`);
-            const data = await res.json();
+              // If the selected homeTeam is in the map, and we haven't overridden it yet from savedConfig, set it
+              setHomeRoster(prev => {
+                const ht = scheduledGameData?.homeTeam || contract.defaultHomeTeam;
+                return teamMap[ht] || prev;
+              });
+              setAwayRoster(prev => {
+                const at = scheduledGameData?.awayTeam || contract.defaultAwayTeam;
+                return teamMap[at] || prev;
+              });
+
+              // Keep teamMap around if we want to auto-update when team changes
+              (window as any)._remoteTeamMap = teamMap;
+            }
+
             // Data is expected to be [["SettingName", "SettingValue"], ["periodLength", "1200"], ...]
-            if (Array.isArray(data) && data.length > 1) {
+            if (data && Array.isArray(data) && data.length > 1) {
               const remoteDefaults: any = {};
               for (let i = 1; i < data.length; i++) {
                 if (data[i] && data[i].length >= 2) {

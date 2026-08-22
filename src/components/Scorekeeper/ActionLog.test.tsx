@@ -1,131 +1,116 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import ActionLog from './ActionLog';
 import { GameEvent } from '../../types';
 
-describe('ActionLog Component', () => {
-  const mockOnUndo = vi.fn();
-
+describe('ActionLog', () => {
   const defaultProps = {
     events: [],
     filter: 'all',
-    onUndo: mockOnUndo,
-    homeTeam: 'Home',
-    awayTeam: 'Away',
+    onUndo: vi.fn(),
+    homeTeam: 'Home Team',
+    awayTeam: 'Away Team',
     homeColor: '#ff0000',
     awayColor: '#0000ff',
+    labels: {
+      title: 'ACTION LOG',
+      undoButton: 'UNDO ACTION',
+      redoButton: 'REDO ACTION'
+    }
   };
 
-  const sampleEvents: GameEvent[] = [
+  const mockEvents: GameEvent[] = [
     {
-      id: '1',
+      id: 'event-1',
       type: 'goal',
-      team: 'Home',
-      time: '12:34',
-      text: 'Goal by Home',
-      isHistorical: false,
-      isUndone: false,
-    },
-    {
-      id: '2',
-      type: 'shot',
-      team: 'Away',
-      time: '10:00',
-      text: 'Shot by Away',
-      isHistorical: false,
-      isUndone: true,
+      team: 'Home Team',
+      time: '12:00',
+      text: 'Goal by Player 1',
       x: 10,
-      y: 20,
+      y: 20
     },
     {
-      id: '3',
+      id: 'event-2',
       type: 'penalty',
-      team: 'Home',
-      time: '05:00',
-      text: 'Penalty Home',
-      isHistorical: true,
-      isUndone: false,
+      team: 'Away Team',
+      time: '10:00',
+      text: 'Slashing - Player 2',
+      isHistorical: true
     },
+    {
+      id: 'event-3',
+      type: 'shot',
+      team: 'Home Team',
+      time: '08:00',
+      text: 'Shot on Goal',
+      isUndone: true
+    }
   ];
 
-  it('renders without crashing with empty events', () => {
-    const { container } = render(<ActionLog {...defaultProps} />);
-    // The <section> wrapper is rendered even with empty events
-    expect(container.querySelector('section')).toBeInTheDocument();
+  it('renders correctly with empty events and custom labels', () => {
+    render(<ActionLog {...defaultProps} />);
+    expect(screen.getByText('ACTION LOG')).toBeInTheDocument();
   });
 
-  it('renders events correctly', () => {
-    const { container } = render(<ActionLog {...defaultProps} events={sampleEvents} />);
+  it('renders events with time, text, and coordinates', () => {
+    render(<ActionLog {...defaultProps} events={mockEvents} />);
 
-    // Check texts
-    expect(screen.getByText('Goal by Home')).toBeInTheDocument();
-    expect(screen.getByText('Shot by Away')).toBeInTheDocument();
-    expect(screen.getByText('Penalty Home')).toBeInTheDocument();
-
-    // Check time
-    expect(screen.getByText('12:34')).toBeInTheDocument();
-    expect(screen.getByText('10:00')).toBeInTheDocument();
-    expect(screen.getByText('05:00')).toBeInTheDocument();
-
-    // Check coordinates
+    // Check first event
+    expect(screen.getByText('12:00')).toBeInTheDocument();
+    expect(screen.getByText(/Goal by Player 1/)).toBeInTheDocument();
     expect(screen.getByText('(X: 10 Y: 20)')).toBeInTheDocument();
   });
 
-  it('filters events correctly based on filter prop', () => {
-    render(<ActionLog {...defaultProps} events={sampleEvents} filter="goal" />);
+  it('filters events based on the filter prop', () => {
+    const { rerender } = render(<ActionLog {...defaultProps} events={mockEvents} filter="goal" />);
 
-    expect(screen.getByText('Goal by Home')).toBeInTheDocument();
-    expect(screen.queryByText('Shot by Away')).not.toBeInTheDocument();
-    expect(screen.queryByText('Penalty Home')).not.toBeInTheDocument();
+    // Only the goal event should be visible
+    expect(screen.getByText('Goal by Player 1')).toBeInTheDocument();
+    expect(screen.queryByText('Slashing - Player 2')).not.toBeInTheDocument();
+    expect(screen.queryByText('Shot on Goal')).not.toBeInTheDocument();
+
+    rerender(<ActionLog {...defaultProps} events={mockEvents} filter="penalty" />);
+    // Only the penalty event should be visible
+    expect(screen.queryByText('Goal by Player 1')).not.toBeInTheDocument();
+    expect(screen.getByText('Slashing - Player 2')).toBeInTheDocument();
+    expect(screen.queryByText('Shot on Goal')).not.toBeInTheDocument();
   });
 
-  it('renders custom labels correctly', () => {
-    const customLabels = {
-      title: 'CUSTOM LOG TITLE',
-      undoButton: 'REVERT',
-      redoButton: 'APPLY AGAIN',
-    };
+  it('calls onUndo when the undo button is clicked', () => {
+    render(<ActionLog {...defaultProps} events={mockEvents} />);
 
-    render(
-      <ActionLog
-        {...defaultProps}
-        events={sampleEvents}
-        labels={customLabels}
-      />
-    );
+    // The first event is not historical and not undone, so it should have an UNDO button
+    const undoButton = screen.getByText('UNDO ACTION');
+    fireEvent.click(undoButton);
 
-    expect(screen.getByText('CUSTOM LOG TITLE')).toBeInTheDocument();
-    // Event 1 is not undone, so it should have UNDO label
-    expect(screen.getByText('REVERT')).toBeInTheDocument();
-    // Event 2 is undone, so it should have REDO label
-    expect(screen.getByText('APPLY AGAIN')).toBeInTheDocument();
+    expect(defaultProps.onUndo).toHaveBeenCalledWith('event-1');
   });
 
-  it('calls onUndo with the correct id when undo button is clicked', async () => {
-    const user = userEvent.setup();
-    render(<ActionLog {...defaultProps} events={sampleEvents} />);
+  it('renders REDO and applies correct styling for undone events', () => {
+    render(<ActionLog {...defaultProps} events={mockEvents} />);
 
-    // The first event is not undone, and not historical. It has "UNDO" by default.
-    const undoButton = screen.getByText('UNDO');
-    await user.click(undoButton);
-    expect(mockOnUndo).toHaveBeenCalledWith('1');
+    // The third event is undone
+    const redoButton = screen.getByText('REDO ACTION');
+    expect(redoButton).toBeInTheDocument();
+
+    // Check if the text container has line-through styling
+    const textElement = screen.getByText('Shot on Goal');
+    expect(textElement.className).toContain('line-through');
   });
 
-  it('does not render undo/redo button for historical events', () => {
-    render(<ActionLog {...defaultProps} events={sampleEvents} />);
+  it('does not render undo/redo buttons for historical events', () => {
+    render(<ActionLog {...defaultProps} events={mockEvents} />);
 
-    // Event 3 is historical.
-    // We expect 1 UNDO (from event 1) and 1 REDO (from event 2).
-    // No button should be present for event 3.
-    const buttons = screen.getAllByRole('button');
-    expect(buttons).toHaveLength(2); // Only for event 1 and event 2
-  });
+    // The second event is historical
+    const historicalEventText = screen.getByText('Slashing - Player 2');
+    // Get the parent container for the historical event row
+    const row = historicalEventText.closest('.action-log-row');
 
-  it('renders undone items with specific styles', () => {
-      render(<ActionLog {...defaultProps} events={sampleEvents} />);
-
-      const undoneText = screen.getByText('Shot by Away');
-      expect(undoneText.className).toContain('line-through');
+    // Ensure no undo or redo buttons exist within this row
+    if (row) {
+      expect(within(row as HTMLElement).queryByRole('button')).not.toBeInTheDocument();
+    } else {
+      throw new Error('Row not found');
+    }
   });
 });
