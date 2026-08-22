@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { ZoomIn, ZoomOut, RotateCw, Snowflake, Flag, Trophy, AlertTriangle, Save, Award, X } from 'lucide-react';
+import { ZoomIn, ZoomOut, RotateCw } from 'lucide-react';
 import { GameEvent } from '../../types';
 
 // CONTRACT: Alle teksten en fallbacks voor de IJsbaan
