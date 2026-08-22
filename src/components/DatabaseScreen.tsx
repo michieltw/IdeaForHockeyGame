@@ -5,7 +5,7 @@ interface DatabaseScreenProps {
   onBack: () => void;
 }
 
-const GAS_CODE_SNIPPET = `function setupSheet() {
+const generateGasCodeSnippet = (token: string) => `function setupSheet() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
   // Settings Tab
@@ -243,6 +243,7 @@ function doGet(e) {
 
 function doPost(e) {
   try {
+    const SECRET_TOKEN = "${token}";
     const ss = SpreadsheetApp.getActiveSpreadsheet();
 
     // Parse the data
@@ -296,6 +297,7 @@ function doPost(e) {
 
 export default function DatabaseScreen({ onBack }: DatabaseScreenProps) {
   const [gasUrl, setGasUrl] = useState('');
+  const [gasToken, setGasToken] = useState('');
   const [status, setStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
   const [copied, setCopied] = useState(false);
 
@@ -304,6 +306,13 @@ export default function DatabaseScreen({ onBack }: DatabaseScreenProps) {
     if (savedUrl) {
       setGasUrl(savedUrl);
     }
+
+    let savedToken = localStorage.getItem('blackout_gas_token');
+    if (!savedToken) {
+      savedToken = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
+      localStorage.setItem('blackout_gas_token', savedToken);
+    }
+    setGasToken(savedToken);
   }, []);
 
   const testConnection = async (urlToTest: string) => {
@@ -314,13 +323,11 @@ export default function DatabaseScreen({ onBack }: DatabaseScreenProps) {
 
     setStatus('testing');
     try {
-      // In a real scenario, you'd want to make an actual request.
-      // Since it's a generic GAS url, maybe just a GET request.
-      // But CORS might block simple fetch if not configured.
-      // However, we just try to fetch it or assume it's working if it matches a basic shape,
-      // but let's actually try a simple fetch (no-cors just to see if it resolves, though no-cors won't give a clear success/fail if it's 404 vs 200).
-      // Let's try standard fetch. If CORS fails, it throws.
-      const response = await fetch(urlToTest, { method: 'GET' });
+      const response = await fetch(urlToTest, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({ action: 'testConnection', token: gasToken })
+      });
       if (response.ok || response.type === 'opaque') {
         setStatus('success');
       } else {
@@ -345,7 +352,7 @@ export default function DatabaseScreen({ onBack }: DatabaseScreenProps) {
   };
 
   const handleCopyCode = () => {
-    navigator.clipboard.writeText(GAS_CODE_SNIPPET);
+    navigator.clipboard.writeText(generateGasCodeSnippet(gasToken));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -446,7 +453,7 @@ export default function DatabaseScreen({ onBack }: DatabaseScreenProps) {
               </button>
             </div>
             <pre className="bg-[#050505] p-4 rounded-md border border-[#333] overflow-x-auto text-[11px] md:text-xs font-mono text-gray-300">
-              <code>{GAS_CODE_SNIPPET}</code>
+              <code>{generateGasCodeSnippet(gasToken)}</code>
             </pre>
           </div>
         </div>

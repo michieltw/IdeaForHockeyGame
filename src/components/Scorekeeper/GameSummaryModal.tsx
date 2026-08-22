@@ -176,6 +176,7 @@ export default function GameSummaryModal({
 
     // Push to Google Sheets database if configured
     const gasUrl = localStorage.getItem('blackout_gas_url');
+    const gasToken = localStorage.getItem('blackout_gas_token') || '';
     if (gasUrl && !isFinalized) {
       try {
         const gameId = `${now}_${cleanHome}_${cleanAway}_${Date.now()}`;
