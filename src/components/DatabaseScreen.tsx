@@ -406,8 +406,8 @@ export default function DatabaseScreen({ onBack }: DatabaseScreenProps) {
           <div className="flex flex-col gap-2 mt-2">
             <input
               type="text"
-              value={gasSecret}
-              onChange={(e) => setGasSecret(e.target.value)}
+              value={gasToken}
+              onChange={(e) => setGasToken(e.target.value)}
               placeholder="Jouw geheime sleutel"
               className="w-full bg-[#050505] border border-[#333] rounded-md px-3 py-3 text-white text-sm font-mono placeholder:text-gray-600 focus:outline-none focus:border-tertiary/50 transition-colors"
             />
