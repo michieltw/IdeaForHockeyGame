@@ -55,6 +55,14 @@ const GAS_CODE_SNIPPET = `function setupSheet() {
     statsSheet.appendRow(["Player", "Team", "GP", "G", "A", "PTS", "PIM"]);
     statsSheet.getRange("A1:G1").setFontWeight("bold");
   }
+
+  // ScheduledGames Tab
+  let scheduledSheet = ss.getSheetByName("ScheduledGames");
+  if (!scheduledSheet) {
+    scheduledSheet = ss.insertSheet("ScheduledGames");
+    scheduledSheet.appendRow(["GameID", "HomeTeam", "AwayTeam", "Date", "Time", "Location", "Competition", "MatchType"]);
+    scheduledSheet.getRange("A1:H1").setFontWeight("bold");
+  }
 }
 
 function calculateStandingsAndStats() {
@@ -211,6 +219,20 @@ function doGet(e) {
 
   if (action === 'getStats') {
     const sheet = ss.getSheetByName("PlayerStats");
+    if (!sheet) return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
+    const data = sheet.getDataRange().getValues();
+    return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (action === 'getGames') {
+    const sheet = ss.getSheetByName("Games");
+    if (!sheet) return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
+    const data = sheet.getDataRange().getValues();
+    return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (action === 'getScheduledGames') {
+    const sheet = ss.getSheetByName("ScheduledGames");
     if (!sheet) return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
     const data = sheet.getDataRange().getValues();
     return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
