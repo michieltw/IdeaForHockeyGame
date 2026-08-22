@@ -1,3 +1,4 @@
+import { getGasUrl } from '../../utils/gasUrl';
 import { useState, useEffect } from 'react';
 import { GameState, GameEvent, GameSettings } from '../../types';
 import { Award, Download, Trash2, X, CheckCircle, RefreshCw, MapPin, Users, Tag } from 'lucide-react';
@@ -175,7 +176,7 @@ export default function GameSummaryModal({
     document.body.removeChild(link);
 
     // Push to Google Sheets database if configured
-    const gasUrl = localStorage.getItem('blackout_gas_url');
+    const gasUrl = getGasUrl();
     if (gasUrl && !isFinalized) {
       try {
         const gameId = `${now}_${cleanHome}_${cleanAway}_${Date.now()}`;

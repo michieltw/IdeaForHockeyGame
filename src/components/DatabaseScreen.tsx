@@ -1,3 +1,4 @@
+import { getGasUrl, setGasUrl as setGasUrlToCache } from '../utils/gasUrl';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, CheckCircle, XCircle, Database, Loader2, Save, Copy } from 'lucide-react';
 
@@ -292,7 +293,7 @@ export default function DatabaseScreen({ onBack }: DatabaseScreenProps) {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const savedUrl = localStorage.getItem('blackout_gas_url');
+    const savedUrl = getGasUrl();
     if (savedUrl) {
       setGasUrl(savedUrl);
     }
@@ -332,7 +333,7 @@ export default function DatabaseScreen({ onBack }: DatabaseScreenProps) {
   };
 
   const handleSave = () => {
-    localStorage.setItem('blackout_gas_url', gasUrl);
+    setGasUrlToCache(gasUrl);
     testConnection(gasUrl);
   };
 

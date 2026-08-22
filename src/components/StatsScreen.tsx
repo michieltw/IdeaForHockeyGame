@@ -1,3 +1,4 @@
+import { getGasUrl } from '../utils/gasUrl';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Trophy, Users, Loader2 } from 'lucide-react';
 
@@ -16,7 +17,7 @@ export default function StatsScreen({ onBack }: StatsScreenProps) {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
-      const gasUrl = localStorage.getItem('blackout_gas_url');
+      const gasUrl = getGasUrl();
 
       if (!gasUrl) {
         setError('Geen database URL geconfigureerd. Ga naar Database instellingen.');
