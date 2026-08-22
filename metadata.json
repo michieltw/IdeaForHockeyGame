@@ -1,0 +1,8 @@
+{
+  "name": "Remixes Jules-Playground",
+  "description": "Imported from GitHub: michieltw/Jules-Playground",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
