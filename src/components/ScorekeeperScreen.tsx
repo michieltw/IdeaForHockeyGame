@@ -1,4 +1,3 @@
-import { useState, useEffect, useRef } from 'react';
 import { GameState, GameEvent, GameConfig, ActivePenalty } from '../types';
 import ScoreHeader from './Scorekeeper/ScoreHeader';
 import MediaControls from './Scorekeeper/MediaControls';
@@ -9,6 +8,7 @@ import PenaltyModal from './Scorekeeper/PenaltyModal';
 import GameSummaryModal from './Scorekeeper/GameSummaryModal';
 import PeriodEndModal from './Scorekeeper/PeriodEndModal';
 import { SettingsContract } from '../settingsContract';
+import { useScorekeeperState } from '../hooks/useScorekeeperState';
 
 export default function ScorekeeperScreen({ contract, onBack }: { contract: SettingsContract; onBack: () => void }) {
   // VOLLEDIG SCHONE START: Geen aannames, geen hardcoded text, geen verzonnen getallen.
@@ -243,284 +243,44 @@ export default function ScorekeeperScreen({ contract, onBack }: { contract: Sett
     const homeSkaters = Math.max(3, 5 - homePenalties);
     const awaySkaters = Math.max(3, 5 - awayPenalties);
 
-    if (homeSkaters === awaySkaters) return 'EV';
-
-    if (eventTeam === config.homeTeam) {
-      return homeSkaters > awaySkaters ? 'PP' : 'SH';
-    } else {
-      return awaySkaters > homeSkaters ? 'PP' : 'SH';
-    }
-  };
-
-  const handleAddShot = (team: 'home' | 'away', x: number, y: number) => {
-    if (!config.settings.trackSOG) {
-      showToast('Shots on goal tracking is disabled in defaults');
-      return;
-    }
-    const realTeam = team === 'home' ? config.homeTeam : config.awayTeam;
-    const newEvent: GameEvent = {
-      id: Date.now().toString(),
-      type: 'shot',
-      team: realTeam,
-      time: timeString,
-      text: `SOG ${realTeam}`,
-      x, y,
-      period: getPeriodString(),
-      clockTime: getClockString(),
-      situation: getSituationString(realTeam)
-    };
-    setGameState(prev => ({
-      ...prev,
-      events: [newEvent, ...prev.events],
-      sogHome: team === 'home' ? prev.sogHome + 1 : prev.sogHome,
-      sogAway: team === 'away' ? prev.sogAway + 1 : prev.sogAway,
-    }));
-  };
-
-  const handleFaceoff = (team: 'home' | 'away', x?: number, y?: number) => {
-    const realTeam = team === 'home' ? config.homeTeam : config.awayTeam;
-    const newEvent: GameEvent = {
-      id: Date.now().toString(),
-      type: 'faceoff',
-      team: realTeam,
-      time: timeString,
-      text: `FOW: ${realTeam}`,
-      period: getPeriodString(),
-      clockTime: getClockString(),
-      situation: getSituationString(realTeam),
-      x,
-      y
-    };
-
-    if (config.settings.trackFOW) {
-      setGameState(prev => ({
-        ...prev,
-        events: [newEvent, ...prev.events],
-        isRunning: true,
-        stoppageTime: 0
-      }));
-    } else {
-      setGameState(prev => ({
-        ...prev,
-        isRunning: true,
-        stoppageTime: 0
-      }));
-    }
-    setIsFaceoffMode(false);
-  };
-
-  const handleIcing = () => {
-    if (!config.settings.trackIcing) {
-      showToast('Icing tracking is disabled in defaults');
-      return;
-    }
-    const newEvent: GameEvent = {
-      id: Date.now().toString(),
-      type: 'icing',
-      team: config.homeTeam,
-      time: timeString,
-      text: 'ICING',
-      period: getPeriodString(),
-      clockTime: getClockString(),
-      situation: 'EV' // standard
-    };
-    setGameState(prev => ({ ...prev, events: [newEvent, ...prev.events] }));
-    showToast('Icing geregistreerd');
-  };
-
-  const handleOffside = () => {
-    if (!config.settings.trackOffside) {
-      showToast('Offside tracking is disabled in defaults');
-      return;
-    }
-    const newEvent: GameEvent = {
-      id: Date.now().toString(),
-      type: 'offside',
-      team: config.homeTeam,
-      time: timeString,
-      text: 'OFFSIDE',
-      period: getPeriodString(),
-      clockTime: getClockString(),
-      situation: 'EV'
-    };
-    setGameState(prev => ({ ...prev, events: [newEvent, ...prev.events] }));
-    showToast('Offside geregistreerd');
-  };
-
-  const handleGoalSubmit = (data: { team: 'home' | 'away'; scorer: string; assist1: string; assist2: string }) => {
-    const realTeam = data.team === 'home' ? config.homeTeam : config.awayTeam;
-    let text = `DOELPUNT ${realTeam} ${data.scorer}`;
-    const assists = [data.assist1, data.assist2].filter(Boolean);
-    if (assists.length > 0) {
-      text += ` (Assists: ${assists.join(', ')})`;
-    }
-
-    const newEvent: GameEvent = {
-      id: Date.now().toString(),
-      type: 'goal',
-      team: realTeam,
-      time: timeString,
-      text,
-      scorer: data.scorer,
-      assist1: data.assist1,
-      assist2: data.assist2,
-      period: getPeriodString(),
-      clockTime: getClockString(),
-      situation: getSituationString(realTeam),
-      player: data.scorer
-    };
-
-    setGameState(prev => ({
-      ...prev,
-      events: [newEvent, ...prev.events],
-      scoreHome: data.team === 'home' ? prev.scoreHome + 1 : prev.scoreHome,
-      scoreAway: data.team === 'away' ? prev.scoreAway + 1 : prev.scoreAway,
-    }));
-    showToast(`Doelpunt ${realTeam} geregistreerd!`);
-
-    if (config.settings?.haptics && "vibrate" in navigator) {
-      navigator.vibrate([200, 100, 200]);
-    }
-  };
-
-  const handlePenaltySubmit = (data: { team: 'home' | 'away'; player: string; reason: string; minutes: number }) => {
-    if (config.settings?.trackPenalties === false) {
-      showToast('Straffen bijhouden is uitgeschakeld in instellingen');
-      return;
-    }
-
-    const realTeam = data.team === 'home' ? config.homeTeam : config.awayTeam;
-    const playerText = data.player || 'Speler';
-    const text = `PEN ${realTeam} ${playerText} (${data.minutes} MIN - ${data.reason})`;
-    const eventId = Date.now().toString();
-
-    const newEvent: GameEvent = {
-      id: eventId,
-      type: 'penalty',
-      team: realTeam,
-      time: timeString,
-      text,
-      penaltyReason: data.reason,
-      penaltyMinutes: data.minutes,
-      period: getPeriodString(),
-      clockTime: getClockString(),
-      situation: getSituationString(realTeam),
-      player: playerText
-    };
-
-    const newActivePenalty: ActivePenalty = {
-      id: eventId,
-      eventId,
-      team: realTeam,
-      player: playerText,
-      reason: data.reason,
-      minutes: data.minutes,
-      secondsRemaining: (data.minutes || 0) * 60
-    };
-
-    setGameState(prev => ({
-      ...prev,
-      events: [newEvent, ...prev.events],
-      activePenalties: [...(prev.activePenalties || []), newActivePenalty]
-    }));
-    showToast(`Straf ${realTeam} geregistreerd!`);
-
-    if (config.settings?.haptics && "vibrate" in navigator) {
-      navigator.vibrate([300]);
-    }
-  };
-
-  const handleFinishGame = () => {
-    try {
-      const savedPlayed = localStorage.getItem('blackout_played_games');
-      const playedGames = savedPlayed ? JSON.parse(savedPlayed) : [];
-      playedGames.push({
-        id: Date.now().toString(),
-        date: new Date().toISOString(),
-        homeTeam: config.homeTeam,
-        awayTeam: config.awayTeam,
-        scoreHome: gameState.scoreHome,
-        scoreAway: gameState.scoreAway,
-        events: gameState.events
-      });
-      localStorage.setItem('blackout_played_games', JSON.stringify(playedGames));
-      // Remove from saved game since it's finished
-      localStorage.removeItem('blackout_hockey_saved_game');
-    } catch (e) {
-      console.error(e);
-    }
-    onBack();
-  };
-
-  const handleSaveGame = () => {
-    try {
-      localStorage.setItem('blackout_hockey_saved_game', JSON.stringify(gameState));
-      showToast('Wedstrijd opgeslagen in local storage!');
-    } catch (e) {
-      showToast('Opslaan mislukt');
-    }
-  };
-
-  const handleUndo = (id: string) => {
-    setGameState(prev => {
-      const eventToUndo = prev.events.find(e => e.id === id);
-      if (!eventToUndo) return prev;
-
-      const isCurrentlyUndone = !!eventToUndo.isUndone;
-
-      let newSogHome = prev.sogHome;
-      let newSogAway = prev.sogAway;
-      let newScoreHome = prev.scoreHome;
-      let newScoreAway = prev.scoreAway;
-      let activePenalties = prev.activePenalties || [];
-
-      if (!isCurrentlyUndone) {
-        // We UNDO this event
-        if (eventToUndo.type === 'shot') {
-          if (eventToUndo.team === config.homeTeam) newSogHome = Math.max(0, newSogHome - 1);
-          if (eventToUndo.team === config.awayTeam) newSogAway = Math.max(0, newSogAway - 1);
-        } else if (eventToUndo.type === 'goal') {
-          if (eventToUndo.team === config.homeTeam) newScoreHome = Math.max(0, newScoreHome - 1);
-          if (eventToUndo.team === config.awayTeam) newScoreAway = Math.max(0, newScoreAway - 1);
-        } else if (eventToUndo.type === 'penalty') {
-          activePenalties = activePenalties.filter(p => p.eventId !== id && p.id !== id);
-        }
-      } else {
-        // We REDO this event
-        if (eventToUndo.type === 'shot') {
-          if (eventToUndo.team === config.homeTeam) newSogHome++;
-          if (eventToUndo.team === config.awayTeam) newSogAway++;
-        } else if (eventToUndo.type === 'goal') {
-          if (eventToUndo.team === config.homeTeam) newScoreHome++;
-          if (eventToUndo.team === config.awayTeam) newScoreAway++;
-        } else if (eventToUndo.type === 'penalty') {
-          const playerText = eventToUndo.scorer || 'Speler';
-          const readdedPenalty: ActivePenalty = {
-            id,
-            eventId: id,
-            team: eventToUndo.team,
-            player: playerText,
-            reason: eventToUndo.penaltyReason || '',
-            minutes: eventToUndo.penaltyMinutes || 2,
-            secondsRemaining: (eventToUndo.penaltyMinutes || 2) * 60
-          };
-          activePenalties = [...activePenalties, readdedPenalty];
-        }
-      }
-
-      const updatedEvents = prev.events.map(e => e.id === id ? { ...e, isUndone: !isCurrentlyUndone } : e);
-
-      return {
-        ...prev,
-        events: updatedEvents,
-        sogHome: newSogHome,
-        sogAway: newSogAway,
-        scoreHome: newScoreHome,
-        scoreAway: newScoreAway,
-        activePenalties
-      };
-    });
-  };
+export default function ScorekeeperScreen({ contract, onBack }: { contract: SettingsContract; onBack: () => void }) {
+  const {
+    config,
+    gameState,
+    setGameState,
+    isFaceoffMode,
+    setIsFaceoffMode,
+    filter,
+    setFilter,
+    toastMessage,
+    showPeriodEndModal,
+    setShowPeriodEndModal,
+    rinkRotation,
+    setRinkRotation,
+    isGoalModalOpen,
+    setIsGoalModalOpen,
+    isPenaltyModalOpen,
+    setIsPenaltyModalOpen,
+    isGameSummaryOpen,
+    setIsGameSummaryOpen,
+    handleTogglePlayPause,
+    handleStoppageCancel,
+    formatTime,
+    handleAddShot,
+    handleFaceoff,
+    handleIcing,
+    handleOffside,
+    handleGoalSubmit,
+    handlePenaltySubmit,
+    handleFinishGame,
+    handleSaveGame,
+    handleUndo,
+    showToast,
+    timeString,
+    getPeriodString,
+    getClockString,
+    getSituationString
+  } = useScorekeeperState({ contract, onBack });
 
   return (
     <div className="flex flex-col min-h-screen overflow-y-auto scrollbar-none bg-[#1a1a1a] relative">
