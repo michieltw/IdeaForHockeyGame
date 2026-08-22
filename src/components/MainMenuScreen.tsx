@@ -1,3 +1,4 @@
+import { getGasUrl } from '../utils/gasUrl';
 import { useState, useRef, useEffect } from 'react';
 import { Play, Download, Upload, LogOut, User, Database as DatabaseIcon, CheckCircle, XCircle, Trophy } from 'lucide-react';
 import { defaultSettingsContract } from '../settingsContract';
@@ -15,7 +16,7 @@ export default function MainMenuScreen({ onNewGame, onStartScheduledGame, onLogo
 
   useEffect(() => {
     const fetchScheduledGames = async () => {
-      const gasUrl = localStorage.getItem('blackout_gas_url');
+      const gasUrl = getGasUrl();
       if (gasUrl) {
         try {
           const res = await fetch(`${gasUrl}?action=getScheduledGames`);
@@ -56,7 +57,7 @@ export default function MainMenuScreen({ onNewGame, onStartScheduledGame, onLogo
 
   useEffect(() => {
     if (videoRef.current) {
-      videoRef.current.play().catch(() => {
+      Promise.resolve(videoRef.current.play()).catch(() => {
         // Autoplay might fail, fallback to skip
         setVideoPlaying(false);
       });
@@ -64,7 +65,7 @@ export default function MainMenuScreen({ onNewGame, onStartScheduledGame, onLogo
 
     // Check DB status on mount
     const checkDb = async () => {
-      const url = localStorage.getItem('blackout_gas_url');
+      const url = getGasUrl();
       if (!url || !url.includes('script.google.com')) {
         setDbStatus('error');
         return;
@@ -85,7 +86,7 @@ export default function MainMenuScreen({ onNewGame, onStartScheduledGame, onLogo
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExportGames = async () => {
-    const gasUrl = localStorage.getItem('blackout_gas_url');
+    const gasUrl = getGasUrl();
     if (gasUrl) {
       try {
         const res = await fetch(`${gasUrl}?action=getGames`);

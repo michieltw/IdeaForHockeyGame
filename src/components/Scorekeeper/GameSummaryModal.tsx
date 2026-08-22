@@ -1,3 +1,4 @@
+import { getGasUrl } from '../../utils/gasUrl';
 import { useState, useEffect } from 'react';
 import { GameState, GameEvent, GameSettings } from '../../types';
 import { Award, Download, Trash2, X, CheckCircle, RefreshCw, MapPin, Users, Tag } from 'lucide-react';
