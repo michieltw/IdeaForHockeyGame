@@ -212,7 +212,7 @@ export default function GameSummaryModal({
         await fetch(gasUrl, {
           method: 'POST',
           mode: 'no-cors',
-          body: JSON.stringify({ action: 'saveGame', logs, game })
+          body: JSON.stringify({ action: 'saveGame', logs, game, token: import.meta.env.VITE_GAS_TOKEN })
         });
       } catch (err) {
         console.error("Failed to push to database:", err);

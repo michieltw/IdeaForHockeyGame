@@ -248,6 +248,11 @@ function doPost(e) {
     // Parse the data
     const data = JSON.parse(e.postData.contents);
 
+    // Verify token (Ensure this matches your client's VITE_GAS_TOKEN)
+    if (!data.token || data.token !== 'blackout_secure_token_2024') {
+      throw new Error("Unauthorized");
+    }
+
     if (data.action === 'saveGame' || data.logs) {
       const logsSheet = ss.getSheetByName("ActionLogs");
       if (!logsSheet) throw new Error("ActionLogs sheet niet gevonden");
