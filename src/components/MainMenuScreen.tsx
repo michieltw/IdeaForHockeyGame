@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Play, Calendar, Settings as SettingsIcon, Download, Upload, LogOut, User, Database as DatabaseIcon, CheckCircle, XCircle, Trophy } from 'lucide-react';
+import { Play, Download, Upload, LogOut, User, Database as DatabaseIcon, CheckCircle, XCircle, Trophy } from 'lucide-react';
 import { defaultSettingsContract } from '../settingsContract';
 
 interface MainMenuScreenProps {
@@ -179,8 +179,16 @@ export default function MainMenuScreen({ onNewGame, onStartScheduledGame, onLogo
           const line = lines[i].trim();
           if (!line) continue;
 
-          const cols = line.split(',').map(c => c.replace(/^"|"$/g, '').trim());
-          if (cols.length >= 3) {
+          const cols = line.split(',').map(c => {
+            let val = c.replace(/^"|"$/g, '').trim();
+            val = val.replace(/[<>]/g, ''); // Basic XSS prevention
+            if (/^[=+\-@\t\r]/.test(val)) { // Prevent CSV injection
+              val = "'" + val;
+            }
+            return val.substring(0, 100); // Enforce length limit
+          });
+
+          if (cols.length >= 3 && cols[1] && cols[2]) {
             newGames.push({
               id: cols[0] || Date.now().toString() + i,
               homeTeam: cols[1],
