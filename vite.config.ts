@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
@@ -22,9 +23,9 @@ export default defineConfig(() => {
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
     test: {
-      globals: true,
       environment: 'jsdom',
-      setupFiles: './vitest.setup.ts',
+      setupFiles: './src/setupTests.ts',
+      globals: true,
     },
   };
 });
