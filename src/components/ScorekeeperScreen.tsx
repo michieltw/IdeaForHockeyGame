@@ -128,54 +128,67 @@ export default function ScorekeeperScreen({ contract, onBack }: { contract: Sett
   };
 
   useEffect(() => {
-    let interval: any;
+    let animationFrameId: number;
+    let lastTick = performance.now();
     const isContinuousPenalty = config.settings?.penaltyClock === 'Continuous';
 
-    if (gameState.isRunning) {
-      interval = setInterval(() => {
-        setGameState(prev => {
-          const newTime = Math.max(0, prev.timeRemaining - 1);
-          const updatedPenalties = (prev.activePenalties || [])
-            .map(p => ({ ...p, secondsRemaining: p.secondsRemaining - 1 }))
-            .filter(p => p.secondsRemaining > 0);
+    const tick = (now: number) => {
+      // Calculate delta time in seconds, we wait for at least 1 second (1000ms) to pass before updating
+      const deltaMs = now - lastTick;
 
-          let newIsRunning = prev.isRunning;
-          if (newTime === 0 && config.settings?.autoStopAtPeriodEnd === 'Yes') {
-             newIsRunning = false;
-          }
-          if (newTime === 0 && prev.timeRemaining > 0) {
-             setTimeout(() => {
+      if (deltaMs >= 1000) {
+        // Find how many full seconds have passed
+        const deltaSeconds = Math.floor(deltaMs / 1000);
+        lastTick += deltaSeconds * 1000;
+
+        setGameState(prev => {
+          if (prev.isRunning) {
+            const newTime = Math.max(0, prev.timeRemaining - deltaSeconds);
+            let updatedPenalties = prev.activePenalties || [];
+            if (updatedPenalties.length > 0) {
+              updatedPenalties = updatedPenalties
+                .map(p => ({ ...p, secondsRemaining: p.secondsRemaining - deltaSeconds }))
+                .filter(p => p.secondsRemaining > 0);
+            }
+
+            let newIsRunning: boolean = prev.isRunning;
+            if (newTime === 0 && config.settings?.autoStopAtPeriodEnd === 'Yes') {
+              newIsRunning = false;
+            }
+            if (newTime === 0 && prev.timeRemaining > 0) {
+              setTimeout(() => {
                 setShowPeriodEndModal(true);
-             }, 2000);
-          }
+              }, 2000);
+            }
 
-          return {
-            ...prev,
-            isRunning: newIsRunning,
-            timeRemaining: newTime,
-            activePenalties: updatedPenalties
-          };
-        });
-      }, 1000);
-    } else {
-      interval = setInterval(() => {
-        setGameState(prev => {
-          let updatedPenalties = prev.activePenalties || [];
-          if (isContinuousPenalty && updatedPenalties.length > 0) {
-            updatedPenalties = updatedPenalties
-              .map(p => ({ ...p, secondsRemaining: p.secondsRemaining - 1 }))
-              .filter(p => p.secondsRemaining > 0);
-          }
+            return {
+              ...prev,
+              isRunning: newIsRunning,
+              timeRemaining: newTime,
+              activePenalties: updatedPenalties
+            };
+          } else {
+            let updatedPenalties = prev.activePenalties || [];
+            if (isContinuousPenalty && updatedPenalties.length > 0) {
+              updatedPenalties = updatedPenalties
+                .map(p => ({ ...p, secondsRemaining: p.secondsRemaining - deltaSeconds }))
+                .filter(p => p.secondsRemaining > 0);
+            }
 
-          return {
-            ...prev,
-            stoppageTime: prev.stoppageTime + 1,
-            activePenalties: updatedPenalties
-          };
+            return {
+              ...prev,
+              stoppageTime: prev.stoppageTime + deltaSeconds,
+              activePenalties: updatedPenalties
+            };
+          }
         });
-      }, 1000);
-    }
-    return () => clearInterval(interval);
+      }
+
+      animationFrameId = requestAnimationFrame(tick);
+    };
+
+    animationFrameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animationFrameId);
   }, [gameState.isRunning, config.settings?.penaltyClock, config.settings?.autoStopAtPeriodEnd]);
 
   const handleTogglePlayPause = () => {
