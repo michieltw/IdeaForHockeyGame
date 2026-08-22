@@ -250,7 +250,6 @@ export default function MainMenuScreen({ onNewGame, onLogout, onDatabase, onStan
             <Play fill="currentColor" className="w-6 h-6" />
             NEW GAME
           </button>
-
           <div className="grid grid-cols-2 gap-3 mt-1">
             <button
               onClick={onDatabase}
