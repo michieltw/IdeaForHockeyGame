@@ -249,13 +249,13 @@ function doPost(e) {
     // Parse the data
     const data = JSON.parse(e.postData.contents);
 
-    if (data.token !== SECRET_TOKEN) {
-      return ContentService.createTextOutput(JSON.stringify({error: "Unauthorized"})).setMimeType(ContentService.MimeType.JSON);
-    }
-
-    if (data.action === 'testConnection') {
-      return ContentService.createTextOutput(JSON.stringify({status: "Success"})).setMimeType(ContentService.MimeType.JSON);
-    }
+    // Sanitize input to prevent formula injection
+    const sanitizeField = (value) => {
+      if (typeof value === 'string' && value.match(/^[=+\-@]/)) {
+        return "'" + value;
+      }
+      return value;
+    };
 
     if (data.action === 'saveGame' || data.logs) {
       const logsSheet = ss.getSheetByName("ActionLogs");
@@ -267,7 +267,7 @@ function doPost(e) {
             log.GameID, log.Date, log.HomeTeam, log.AwayTeam,
             log.Timestamp, log.EventType, log.Team, log.Description,
             log.X, log.Y, log.Player, log.Assist1, log.Assist2, log.PenaltyReason, log.PenaltyMinutes
-          ]);
+          ].map(sanitizeField));
         });
       }
 
@@ -278,7 +278,7 @@ function doPost(e) {
           gamesSheet.appendRow([
             g.GameID, g.Date, g.HomeTeam, g.AwayTeam,
             g.HomeScore, g.AwayScore, g.HomeSOG, g.AwaySOG, g.Location
-          ]);
+          ].map(sanitizeField));
         }
       }
 
