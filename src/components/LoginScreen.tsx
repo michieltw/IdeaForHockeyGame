@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Mail, Lock, LogIn } from 'lucide-react';
 
 interface LoginScreenProps {
@@ -5,6 +6,37 @@ interface LoginScreenProps {
 }
 
 export default function LoginScreen({ onLogin }: LoginScreenProps) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success) {
+          setError('');
+          onLogin();
+        } else {
+          setError(data.message || 'Invalid email or password');
+        }
+      } else {
+        setError('Invalid email or password');
+      }
+    } catch (err) {
+      setError('An error occurred during login');
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-4 md:px-0">
       {/* Background Texture */}
@@ -30,8 +62,14 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
         <div className="bevel-container rounded-lg p-6 md:p-10 flex flex-col gap-6">
           <form
             className="flex flex-col gap-4"
-            onSubmit={(e) => { e.preventDefault(); onLogin(); }}
+            onSubmit={handleSubmit}
           >
+            {error && (
+              <div className="bg-error/10 border border-error/50 text-error px-4 py-2 rounded text-sm font-mono text-center">
+                {error}
+              </div>
+            )}
+
             {/* Email Input */}
             <div className="flex flex-col gap-1">
               <label className="font-mono text-[12px] font-bold tracking-widest text-on-surface-variant uppercase" htmlFor="email">
@@ -45,6 +83,8 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                   placeholder="player@blackouthockey.com"
                   required
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
             </div>
@@ -67,6 +107,8 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                   placeholder="••••••••"
                   required
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
             </div>
