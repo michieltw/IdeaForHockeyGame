@@ -230,6 +230,32 @@ export default function SettingsScreen({ scheduledGameData, contract, onStart, o
 
   useEffect(() => {
     try {
+      const fetchRemoteConfig = async () => {
+        const gasUrl = localStorage.getItem('blackout_gas_url');
+        if (gasUrl) {
+          try {
+            const res = await fetch(`${gasUrl}?action=getSettings`);
+            const data = await res.json();
+            // Data is expected to be [["SettingName", "SettingValue"], ["periodLength", "1200"], ...]
+            if (Array.isArray(data) && data.length > 1) {
+              const remoteDefaults: any = {};
+              for (let i = 1; i < data.length; i++) {
+                if (data[i] && data[i].length >= 2) {
+                  let val = data[i][1];
+                  if (val === 'TRUE' || val === 'true') val = true;
+                  else if (val === 'FALSE' || val === 'false') val = false;
+                  else if (!isNaN(Number(val))) val = Number(val);
+                  remoteDefaults[data[i][0]] = val;
+                }
+              }
+              // You could apply these remote defaults here if needed
+              // (This is just an example of how you might sync settings)
+            }
+          } catch(e) {}
+        }
+      };
+      fetchRemoteConfig();
+
       const savedConfig = localStorage.getItem('blackout_hockey_current_config');
       if (savedConfig) {
         const parsed = JSON.parse(savedConfig) as GameConfig;

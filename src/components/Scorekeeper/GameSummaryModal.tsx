@@ -189,13 +189,30 @@ export default function GameSummaryModal({
           Team: e.team,
           Description: e.text,
           X: e.x !== undefined ? Math.round(e.x) : '',
-          Y: e.y !== undefined ? Math.round(e.y) : ''
+          Y: e.y !== undefined ? Math.round(e.y) : '',
+          Player: e.player || '',
+          Assist1: e.assist1 || '',
+          Assist2: e.assist2 || '',
+          PenaltyReason: e.penaltyReason || '',
+          PenaltyMinutes: e.penaltyMinutes || ''
         }));
+
+        const game = {
+          GameID: gameId,
+          Date: date || now,
+          HomeTeam: homeTeam,
+          AwayTeam: awayTeam,
+          HomeScore: gameState.scoreHome,
+          AwayScore: gameState.scoreAway,
+          HomeSOG: gameState.sogHome,
+          AwaySOG: gameState.sogAway,
+          Location: location || ''
+        };
 
         await fetch(gasUrl, {
           method: 'POST',
           mode: 'no-cors',
-          body: JSON.stringify({ logs })
+          body: JSON.stringify({ action: 'saveGame', logs, game })
         });
       } catch (err) {
         console.error("Failed to push to database:", err);

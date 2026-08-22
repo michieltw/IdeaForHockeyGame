@@ -28,8 +28,159 @@ const GAS_CODE_SNIPPET = `function setupSheet() {
   let logsSheet = ss.getSheetByName("ActionLogs");
   if (!logsSheet) {
     logsSheet = ss.insertSheet("ActionLogs");
-    logsSheet.appendRow(["GameID", "Date", "HomeTeam", "AwayTeam", "Timestamp", "EventType", "Team", "Description", "X", "Y"]);
-    logsSheet.getRange("A1:J1").setFontWeight("bold");
+    logsSheet.appendRow(["GameID", "Date", "HomeTeam", "AwayTeam", "Timestamp", "EventType", "Team", "Description", "X", "Y", "Player", "Assist1", "Assist2", "PenaltyReason", "PenaltyMinutes"]);
+    logsSheet.getRange("A1:O1").setFontWeight("bold");
+  }
+
+  // Games Tab
+  let gamesSheet = ss.getSheetByName("Games");
+  if (!gamesSheet) {
+    gamesSheet = ss.insertSheet("Games");
+    gamesSheet.appendRow(["GameID", "Date", "HomeTeam", "AwayTeam", "HomeScore", "AwayScore", "HomeSOG", "AwaySOG", "Location"]);
+    gamesSheet.getRange("A1:I1").setFontWeight("bold");
+  }
+
+  // Standings Tab
+  let standingsSheet = ss.getSheetByName("Standings");
+  if (!standingsSheet) {
+    standingsSheet = ss.insertSheet("Standings");
+    standingsSheet.appendRow(["Team", "GP", "W", "L", "OTL", "PTS", "GF", "GA", "DIFF"]);
+    standingsSheet.getRange("A1:I1").setFontWeight("bold");
+  }
+
+  // PlayerStats Tab
+  let statsSheet = ss.getSheetByName("PlayerStats");
+  if (!statsSheet) {
+    statsSheet = ss.insertSheet("PlayerStats");
+    statsSheet.appendRow(["Player", "Team", "GP", "G", "A", "PTS", "PIM"]);
+    statsSheet.getRange("A1:G1").setFontWeight("bold");
+  }
+}
+
+function calculateStandingsAndStats() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const gamesSheet = ss.getSheetByName("Games");
+  const logsSheet = ss.getSheetByName("ActionLogs");
+  const standingsSheet = ss.getSheetByName("Standings");
+  const statsSheet = ss.getSheetByName("PlayerStats");
+
+  if (!gamesSheet || !logsSheet || !standingsSheet || !statsSheet) return;
+
+  const gamesData = gamesSheet.getDataRange().getValues();
+  const logsData = logsSheet.getDataRange().getValues();
+
+  // Calculate Standings
+  const standings = {};
+  // Skip header
+  for (let i = 1; i < gamesData.length; i++) {
+    const row = gamesData[i];
+    const gameId = row[0];
+    if (!gameId) continue;
+
+    const homeTeam = row[2];
+    const awayTeam = row[3];
+    const homeScore = parseInt(row[4]) || 0;
+    const awayScore = parseInt(row[5]) || 0;
+
+    if (!standings[homeTeam]) standings[homeTeam] = { GP: 0, W: 0, L: 0, OTL: 0, PTS: 0, GF: 0, GA: 0 };
+    if (!standings[awayTeam]) standings[awayTeam] = { GP: 0, W: 0, L: 0, OTL: 0, PTS: 0, GF: 0, GA: 0 };
+
+    standings[homeTeam].GP++;
+    standings[awayTeam].GP++;
+
+    standings[homeTeam].GF += homeScore;
+    standings[homeTeam].GA += awayScore;
+    standings[awayTeam].GF += awayScore;
+    standings[awayTeam].GA += homeScore;
+
+    if (homeScore > awayScore) {
+      standings[homeTeam].W++;
+      standings[homeTeam].PTS += 2;
+      standings[awayTeam].L++; // Simplification: OTL requires knowing if game went to OT
+    } else if (awayScore > homeScore) {
+      standings[awayTeam].W++;
+      standings[awayTeam].PTS += 2;
+      standings[homeTeam].L++;
+    } else {
+      // Tie
+      standings[homeTeam].OTL++;
+      standings[homeTeam].PTS += 1;
+      standings[awayTeam].OTL++;
+      standings[awayTeam].PTS += 1;
+    }
+  }
+
+  // Clear and write standings
+  standingsSheet.getRange(2, 1, standingsSheet.getLastRow() || 2, 9).clearContent();
+  const standingsArray = Object.keys(standings).map(team => {
+    const s = standings[team];
+    return [team, s.GP, s.W, s.L, s.OTL, s.PTS, s.GF, s.GA, s.GF - s.GA];
+  });
+  // Sort by PTS descending
+  standingsArray.sort((a, b) => b[5] - a[5]);
+  if (standingsArray.length > 0) {
+    standingsSheet.getRange(2, 1, standingsArray.length, 9).setValues(standingsArray);
+  }
+
+  // Calculate Player Stats
+  const stats = {};
+  const playerTeams = {}; // Track team per player
+  const gamesPlayedByTeam = {}; // Cache games played
+
+  for (let team in standings) {
+    gamesPlayedByTeam[team] = standings[team].GP;
+  }
+
+  // Skip header
+  for (let i = 1; i < logsData.length; i++) {
+    const row = logsData[i];
+    const eventType = row[5];
+    const team = row[6];
+    const player = row[10];
+    const assist1 = row[11];
+    const assist2 = row[12];
+    const penaltyMinutes = parseInt(row[14]) || 0;
+
+    if (!player || player === 'Speler') continue;
+
+    if (!stats[player]) {
+      stats[player] = { G: 0, A: 0, PTS: 0, PIM: 0 };
+    }
+    playerTeams[player] = team;
+
+    if (eventType === 'goal') {
+      stats[player].G++;
+      stats[player].PTS++;
+
+      if (assist1 && assist1 !== 'Speler') {
+        if (!stats[assist1]) stats[assist1] = { G: 0, A: 0, PTS: 0, PIM: 0 };
+        stats[assist1].A++;
+        stats[assist1].PTS++;
+        playerTeams[assist1] = team;
+      }
+      if (assist2 && assist2 !== 'Speler') {
+        if (!stats[assist2]) stats[assist2] = { G: 0, A: 0, PTS: 0, PIM: 0 };
+        stats[assist2].A++;
+        stats[assist2].PTS++;
+        playerTeams[assist2] = team;
+      }
+    } else if (eventType === 'penalty') {
+      stats[player].PIM += penaltyMinutes;
+    }
+  }
+
+  // Clear and write stats
+  statsSheet.getRange(2, 1, statsSheet.getLastRow() || 2, 7).clearContent();
+  const statsArray = Object.keys(stats).map(player => {
+    const s = stats[player];
+    const team = playerTeams[player] || '';
+    const gp = gamesPlayedByTeam[team] || 0;
+    return [player, team, gp, s.G, s.A, s.PTS, s.PIM];
+  });
+  // Sort by PTS descending
+  statsArray.sort((a, b) => b[5] - a[5] || b[3] - a[3]); // PTS, then G
+  if (statsArray.length > 0) {
+    statsSheet.getRange(2, 1, statsArray.length, 7).setValues(statsArray);
   }
 }
 
@@ -51,27 +202,62 @@ function doGet(e) {
     return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
   }
 
+  if (action === 'getStandings') {
+    const sheet = ss.getSheetByName("Standings");
+    if (!sheet) return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
+    const data = sheet.getDataRange().getValues();
+    return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (action === 'getStats') {
+    const sheet = ss.getSheetByName("PlayerStats");
+    if (!sheet) return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
+    const data = sheet.getDataRange().getValues();
+    return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
+  }
+
   return ContentService.createTextOutput(JSON.stringify({error: "Unknown action"})).setMimeType(ContentService.MimeType.JSON);
 }
 
 function doPost(e) {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sheet = ss.getSheetByName("ActionLogs");
-    if (!sheet) throw new Error("ActionLogs sheet niet gevonden");
 
+    // Parse the data
     const data = JSON.parse(e.postData.contents);
 
-    if (data.logs && Array.isArray(data.logs)) {
-      data.logs.forEach(log => {
-        sheet.appendRow([
-          log.GameID, log.Date, log.HomeTeam, log.AwayTeam,
-          log.Timestamp, log.EventType, log.Team, log.Description, log.X, log.Y
-        ]);
-      });
+    if (data.action === 'saveGame' || data.logs) {
+      const logsSheet = ss.getSheetByName("ActionLogs");
+      if (!logsSheet) throw new Error("ActionLogs sheet niet gevonden");
+
+      if (data.logs && Array.isArray(data.logs)) {
+        data.logs.forEach(log => {
+          logsSheet.appendRow([
+            log.GameID, log.Date, log.HomeTeam, log.AwayTeam,
+            log.Timestamp, log.EventType, log.Team, log.Description,
+            log.X, log.Y, log.Player, log.Assist1, log.Assist2, log.PenaltyReason, log.PenaltyMinutes
+          ]);
+        });
+      }
+
+      if (data.game) {
+        const gamesSheet = ss.getSheetByName("Games");
+        if (gamesSheet) {
+          const g = data.game;
+          gamesSheet.appendRow([
+            g.GameID, g.Date, g.HomeTeam, g.AwayTeam,
+            g.HomeScore, g.AwayScore, g.HomeSOG, g.AwaySOG, g.Location
+          ]);
+        }
+      }
+
+      // Automatically recalculate stats and standings after saving a game
+      calculateStandingsAndStats();
+
+      return ContentService.createTextOutput(JSON.stringify({status: "Success"})).setMimeType(ContentService.MimeType.JSON);
     }
 
-    return ContentService.createTextOutput(JSON.stringify({status: "Success"})).setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({error: "No valid action found"})).setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({error: error.message})).setMimeType(ContentService.MimeType.JSON);
   }

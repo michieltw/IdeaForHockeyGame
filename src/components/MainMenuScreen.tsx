@@ -6,10 +6,10 @@ interface MainMenuScreenProps {
   onNewGame: () => void;
   onLogout: () => void;
   onDatabase: () => void;
-  onStandings: () => void;
+  onStats: () => void;
 }
 
-export default function MainMenuScreen({ onNewGame, onLogout, onDatabase, onStandings }: MainMenuScreenProps) {
+export default function MainMenuScreen({ onNewGame, onLogout, onDatabase, onStats }: MainMenuScreenProps) {
   const [videoPlaying, setVideoPlaying] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [dbStatus, setDbStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -44,7 +44,17 @@ export default function MainMenuScreen({ onNewGame, onLogout, onDatabase, onStan
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleExportGames = () => {
+  const handleExportGames = async () => {
+    const gasUrl = localStorage.getItem('blackout_gas_url');
+    if (gasUrl) {
+      try {
+        const res = await fetch(`${gasUrl}?action=getGames`);
+        const data = await res.json();
+        if (data && data.length > 0) {
+          // If we had a specific format we'd download it here
+        }
+      } catch (e) {}
+    }
     const savedPlayed = localStorage.getItem('blackout_played_games');
     const playedGames = savedPlayed ? JSON.parse(savedPlayed) : [];
 
@@ -250,12 +260,13 @@ export default function MainMenuScreen({ onNewGame, onLogout, onDatabase, onStan
             <Play fill="currentColor" className="w-6 h-6" />
             NEW GAME
           </button>
-          <div className="grid grid-cols-2 gap-3 mt-1">
+
+          <div className="flex gap-3 w-full">
             <button
               onClick={onDatabase}
-              className="w-full bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3.5 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1.5 uppercase shadow-md inner-glow relative"
+              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[14px] font-bold tracking-widest py-3.5 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1.5 uppercase shadow-md inner-glow relative"
             >
-              <DatabaseIcon className="w-4 h-4" />
+              <DatabaseIcon className="w-5 h-5" />
               DATABASE
               {dbStatus === 'success' && (
                 <CheckCircle className="w-3 h-3 text-green-500 absolute top-2 right-2" />
@@ -264,13 +275,12 @@ export default function MainMenuScreen({ onNewGame, onLogout, onDatabase, onStan
                 <XCircle className="w-3 h-3 text-error absolute top-2 right-2" />
               )}
             </button>
-
             <button
-              onClick={onStandings}
-              className="w-full bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3.5 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1.5 uppercase shadow-md inner-glow"
+              onClick={onStats}
+              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[14px] font-bold tracking-widest py-3.5 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1.5 uppercase shadow-md inner-glow"
             >
-              <Trophy className="w-4 h-4 text-tertiary" />
-              STANDINGS & STATS
+              <Trophy className="w-5 h-5 text-tertiary" />
+              STATS
             </button>
           </div>
 
