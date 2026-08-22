@@ -184,6 +184,21 @@ export default function SettingsScreen({ scheduledGameData, contract, onStart, o
 
   const [activeRosterModal, setActiveRosterModal] = useState<{ isHome: boolean } | null>(null);
 
+  // Auto-update rosters when teams change if we have remote team data
+  useEffect(() => {
+    const teamMap = (window as any)._remoteTeamMap;
+    if (teamMap) {
+      if (teamMap[homeTeam]) setHomeRoster(teamMap[homeTeam]);
+    }
+  }, [homeTeam]);
+
+  useEffect(() => {
+    const teamMap = (window as any)._remoteTeamMap;
+    if (teamMap) {
+      if (teamMap[awayTeam]) setAwayRoster(teamMap[awayTeam]);
+    }
+  }, [awayTeam]);
+
   const [periodLength, setPeriodLength] = useState(contract.defaultPeriodLength);
   const [p1Input, setP1Input] = useState(`${contract.defaultPeriodLength.toString().padStart(2, '0')}:00`);
   const [trackIcing, setTrackIcing] = useState(contract.defaultTrackIcing);
@@ -234,6 +249,34 @@ export default function SettingsScreen({ scheduledGameData, contract, onStart, o
         const gasUrl = localStorage.getItem('blackout_gas_url');
         if (gasUrl) {
           try {
+            // Also fetch teams
+            fetch(`${gasUrl}?action=getTeams`).then(r => r.json()).then(teamsData => {
+              if (Array.isArray(teamsData) && teamsData.length > 1) {
+                const teamMap: Record<string, Player[]> = {};
+                for (let i = 1; i < teamsData.length; i++) {
+                  const row = teamsData[i];
+                  if (!row || row.length < 5) continue;
+                  const [tName, pId, pNum, pName, pPos] = row;
+                  if (!tName) continue;
+                  if (!teamMap[tName]) teamMap[tName] = [];
+                  teamMap[tName].push({ id: pId || Date.now().toString() + i, number: pNum || '', name: pName || '', position: pPos || '' });
+                }
+
+                // If the selected homeTeam is in the map, and we haven't overridden it yet from savedConfig, set it
+                setHomeRoster(prev => {
+                  const ht = scheduledGameData?.homeTeam || contract.defaultHomeTeam;
+                  return teamMap[ht] || prev;
+                });
+                setAwayRoster(prev => {
+                  const at = scheduledGameData?.awayTeam || contract.defaultAwayTeam;
+                  return teamMap[at] || prev;
+                });
+
+                // Keep teamMap around if we want to auto-update when team changes
+                (window as any)._remoteTeamMap = teamMap;
+              }
+            }).catch(console.error);
+
             const res = await fetch(`${gasUrl}?action=getSettings`);
             const data = await res.json();
             // Data is expected to be [["SettingName", "SettingValue"], ["periodLength", "1200"], ...]
@@ -248,8 +291,41 @@ export default function SettingsScreen({ scheduledGameData, contract, onStart, o
                   remoteDefaults[data[i][0]] = val;
                 }
               }
-              // You could apply these remote defaults here if needed
-              // (This is just an example of how you might sync settings)
+              // Apply remote defaults
+              if (remoteDefaults.periodLength !== undefined) {
+                 const mins = Math.round(remoteDefaults.periodLength / 60);
+                 setPeriodLength(mins);
+                 setP1Input(`${mins.toString().padStart(2, '0')}:00`);
+              }
+              if (remoteDefaults.trackIcing !== undefined) setTrackIcing(remoteDefaults.trackIcing);
+              if (remoteDefaults.trackOffside !== undefined) setTrackOffside(remoteDefaults.trackOffside);
+              if (remoteDefaults.trackSOG !== undefined) setTrackSOG(remoteDefaults.trackSOG);
+              if (remoteDefaults.officialGame !== undefined) setOfficialGame(remoteDefaults.officialGame);
+              if (remoteDefaults.gameType) setGameType(remoteDefaults.gameType);
+              if (remoteDefaults.attendance !== undefined) setAttendance(remoteDefaults.attendance);
+              if (remoteDefaults.ticketsSold !== undefined) setTicketsSold(remoteDefaults.ticketsSold);
+              if (remoteDefaults.liveGame !== undefined) setLiveGame(remoteDefaults.liveGame);
+              if (remoteDefaults.teamSelection) setTeamSelection(remoteDefaults.teamSelection);
+              if (remoteDefaults.allowFillInPlayers !== undefined) setAllowFillInPlayers(remoteDefaults.allowFillInPlayers);
+              if (remoteDefaults.gameClock !== undefined) setGameClock(remoteDefaults.gameClock);
+              if (remoteDefaults.clockPauseBehavior) setClockPauseBehavior(remoteDefaults.clockPauseBehavior);
+              if (remoteDefaults.autoStopAtPeriodEnd) setAutoStopAtPeriodEnd(remoteDefaults.autoStopAtPeriodEnd);
+              if (remoteDefaults.periodFormat) setPeriodFormat(remoteDefaults.periodFormat);
+              if (remoteDefaults.shootout !== undefined) setShootout(remoteDefaults.shootout);
+              if (remoteDefaults.soRules) setSoRules(remoteDefaults.soRules);
+              if (remoteDefaults.trackSOGLocation !== undefined) setTrackSOGLocation(remoteDefaults.trackSOGLocation);
+              if (remoteDefaults.trackFOW !== undefined) setTrackFOW(remoteDefaults.trackFOW);
+              if (remoteDefaults.faceoffLocation !== undefined) setFaceoffLocation(remoteDefaults.faceoffLocation);
+              if (remoteDefaults.goalscorer !== undefined) setGoalscorer(remoteDefaults.goalscorer);
+              if (remoteDefaults.assists) setAssists(remoteDefaults.assists);
+              if (remoteDefaults.trackPenalties !== undefined) setTrackPenalties(remoteDefaults.trackPenalties);
+              if (remoteDefaults.penaltyClock) setPenaltyClock(remoteDefaults.penaltyClock);
+              if (remoteDefaults.durationTypes) setDurationTypes(remoteDefaults.durationTypes);
+              if (remoteDefaults.officialsMode) setOfficialsMode(remoteDefaults.officialsMode);
+              if (remoteDefaults.linesmenMode) setLinesmenMode(remoteDefaults.linesmenMode);
+              if (remoteDefaults.venueMode) setVenueMode(remoteDefaults.venueMode);
+              if (remoteDefaults.capacity !== undefined) setCapacity(remoteDefaults.capacity);
+              if (remoteDefaults.avgPrice !== undefined) setAvgPrice(remoteDefaults.avgPrice);
             }
           } catch(e) {}
         }
