@@ -7,6 +7,10 @@ import {defineConfig} from 'vitest/config';
 export default defineConfig(() => {
   return {
     plugins: [react(), tailwindcss()],
+    test: {
+      environment: 'jsdom',
+      setupFiles: ['./vitest.setup.ts'],
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
