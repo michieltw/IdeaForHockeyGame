@@ -18,6 +18,12 @@ export default defineConfig(() => {
       allowedHosts: true as const,
       hmr: process.env.DISABLE_HMR !== 'true',
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3001',
+          changeOrigin: true,
+        },
+      },
     },
     test: {
       environment: 'jsdom',
