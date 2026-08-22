@@ -82,7 +82,7 @@ describe('MainMenuScreen', () => {
 
   it('calls onLogout when user icon is clicked', () => {
     render(<MainMenuScreen {...mockProps} />);
-    const logoutButton = screen.getByRole('button', { name: 'Logout / Switch User' });
+    const logoutButton = screen.getByRole('button', { name: 'Logout' });
     fireEvent.click(logoutButton);
     expect(mockProps.onLogout).toHaveBeenCalledTimes(1);
   });

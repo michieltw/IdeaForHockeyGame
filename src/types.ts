@@ -1,4 +1,46 @@
-export type Screen = 'splash' | 'main-menu' | 'settings' | 'scorekeeper' | 'database' | 'stats' | 'ecosystem';
+export type Screen = 'splash' | 'main-menu' | 'settings' | 'scorekeeper' | 'database' | 'stats' | 'ecosystem' | 'my-profile' | 'people-directory';
+
+export interface User {
+  id: string;
+  email: string;
+  role: 'Admin' | 'Manager' | 'Player' | 'Fan';
+  personId?: string;
+}
+
+export interface Person {
+  id: string;
+  userId?: string;
+  firstName: string;
+  lastName: string;
+  birthdate?: string;
+  email?: string;
+  phone?: string;
+}
+
+export interface PersonJob {
+  id: string;
+  personId: string;
+  clubId: string;
+  title: string;
+  role: string; // e.g. Coach, Manager
+}
+
+export interface PlayerProfile {
+  id: string;
+  personId: string;
+  height?: string;
+  weight?: string;
+  handedness?: 'Left' | 'Right';
+  status?: string; // e.g. Active, Free Agent
+}
+
+export interface PlayerEquipment {
+  id: string;
+  personId: string;
+  stickBrand?: string;
+  skateBrand?: string;
+  helmetBrand?: string;
+}
 
 export interface Player {
   id: string;

@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Mail, Lock, LogIn } from 'lucide-react';
+import { User } from '../types';
 
 interface LoginScreenProps {
-  onLogin: () => void;
+  onLogin: (user: User) => void;
 }
 
 export default function LoginScreen({ onLogin }: LoginScreenProps) {
@@ -25,7 +26,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
         const data = await res.json();
         if (data.success) {
           setError('');
-          onLogin();
+          onLogin(data.user);
         } else {
           setError(data.message || 'Invalid email or password');
         }
