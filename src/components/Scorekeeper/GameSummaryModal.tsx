@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { GameState, GameEvent, GameSettings } from '../../types';
-import { Award, Download, Trash2, X, CheckCircle, RefreshCw, MapPin, Users, Ticket, Tag } from 'lucide-react';
+import { Award, Download, Trash2, X, CheckCircle, RefreshCw, MapPin, Users, Tag } from 'lucide-react';
 
 // CONTRACT: Alle teksten, headers en knop-labels
 export interface GameSummaryModalLabels {
