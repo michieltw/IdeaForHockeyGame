@@ -1,5 +1,2 @@
-import '@testing-library/jest-dom';
-import { vi } from 'vitest';
-
-window.HTMLMediaElement.prototype.play = vi.fn(() => Promise.resolve());
-window.HTMLMediaElement.prototype.pause = vi.fn();
+import '@testing-library/jest-dom'
+window.HTMLMediaElement.prototype.play = vi.fn().mockResolvedValue(undefined);

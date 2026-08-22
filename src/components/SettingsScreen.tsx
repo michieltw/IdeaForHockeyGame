@@ -1,3 +1,4 @@
+import { getGasUrl } from '../utils/gasUrl';
 import { useState, useEffect } from 'react';
 import { Play, Users, ArrowLeft, ChevronDown, ChevronUp } from 'lucide-react';
 import { GameConfig, Player } from '../types';
@@ -246,7 +247,7 @@ export default function SettingsScreen({ scheduledGameData, contract, onStart, o
   useEffect(() => {
     try {
       const fetchRemoteConfig = async () => {
-        const gasUrl = localStorage.getItem('blackout_gas_url');
+        const gasUrl = getGasUrl();
         if (gasUrl) {
           try {
             // Fetch teams and settings concurrently

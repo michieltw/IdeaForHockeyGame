@@ -1,3 +1,4 @@
+import { getGasUrl } from '../utils/gasUrl';
 import { useState, useRef, useEffect } from 'react';
 import { Play, Download, Upload, LogOut, User, Database as DatabaseIcon, CheckCircle, XCircle, Trophy } from 'lucide-react';
 import { defaultSettingsContract } from '../settingsContract';
@@ -15,7 +16,7 @@ export default function MainMenuScreen({ onNewGame, onStartScheduledGame, onLogo
 
   useEffect(() => {
     const fetchScheduledGames = async () => {
-      const gasUrl = localStorage.getItem('blackout_gas_url');
+      const gasUrl = getGasUrl();
       if (gasUrl) {
         try {
           const res = await fetch(`${gasUrl}?action=getScheduledGames`);
@@ -56,7 +57,7 @@ export default function MainMenuScreen({ onNewGame, onStartScheduledGame, onLogo
 
   useEffect(() => {
     if (videoRef.current) {
-      videoRef.current.play().catch(() => {
+      Promise.resolve(videoRef.current.play()).catch(() => {
         // Autoplay might fail, fallback to skip
         setVideoPlaying(false);
       });
@@ -64,7 +65,7 @@ export default function MainMenuScreen({ onNewGame, onStartScheduledGame, onLogo
 
     // Check DB status on mount
     const checkDb = async () => {
-      const url = localStorage.getItem('blackout_gas_url');
+      const url = getGasUrl();
       if (!url || !url.includes('script.google.com')) {
         setDbStatus('error');
         return;
@@ -85,7 +86,7 @@ export default function MainMenuScreen({ onNewGame, onStartScheduledGame, onLogo
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExportGames = async () => {
-    const gasUrl = localStorage.getItem('blackout_gas_url');
+    const gasUrl = getGasUrl();
     if (gasUrl) {
       try {
         const res = await fetch(`${gasUrl}?action=getGames`);
@@ -108,46 +109,42 @@ export default function MainMenuScreen({ onNewGame, onStartScheduledGame, onLogo
     playedGames.forEach((game: any) => {
       const gameId = game.id || '';
       if (game.events && game.events.length > 0) {
-        const activeEvents = game.events.filter((e: any) => !e.isUndone);
-        const chronologicalEvents = [...activeEvents].reverse();
-
         let runScoreHome = game.scoreHome || 0;
         let runScoreAway = game.scoreAway || 0;
         let runSogHome = game.sogHome || 0;
         let runSogAway = game.sogAway || 0;
 
-        activeEvents.forEach((e: any) => {
-          if (e.type === 'goal') {
-            if (e.team === game.homeTeam) runScoreHome--;
-            if (e.team === game.awayTeam) runScoreAway--;
-          } else if (e.type === 'shot') {
-            if (e.team === game.homeTeam) runSogHome--;
-            if (e.team === game.awayTeam) runSogAway--;
-          }
-        });
+        const lines = [];
+        for (let i = 0; i < game.events.length; i++) {
+          const e = game.events[i];
+          if (!e.isUndone) {
+            const cleanText = e.text ? e.text.replace(/"/g, '""') : '';
+            const xVal = e.x !== undefined ? Math.round(e.x) : '';
+            const yVal = e.y !== undefined ? Math.round(e.y) : '';
+            const period = e.period || '';
+            const clockTime = e.clockTime || '';
+            const situation = e.situation || '';
+            const player = e.player || '';
+            const assist1 = e.assist1 || '';
+            const assist2 = e.assist2 || '';
+            const penaltyReason = e.penaltyReason || '';
+            const penaltyMinutes = e.penaltyMinutes || '';
 
-        chronologicalEvents.forEach((e: any) => {
-          if (e.type === 'goal') {
-            if (e.team === game.homeTeam) runScoreHome++;
-            if (e.team === game.awayTeam) runScoreAway++;
-          } else if (e.type === 'shot') {
-            if (e.team === game.homeTeam) runSogHome++;
-            if (e.team === game.awayTeam) runSogAway++;
-          }
+            lines.push(`"${gameId}","${game.date}","${game.homeTeam}","${game.awayTeam}",${runScoreHome},${runScoreAway},${runSogHome},${runSogAway},"${game.location || ''}","${game.competition || ''}","${game.matchType || ''}","${period}","${clockTime}","${situation}","${player}","${assist1}","${assist2}","${penaltyReason}","${penaltyMinutes}","${e.time || ''}","${e.type || ''}","${e.team || ''}","${cleanText}","${xVal}","${yVal}"\n`);
 
-          const cleanText = e.text ? e.text.replace(/"/g, '""') : '';
-          const xVal = e.x !== undefined ? Math.round(e.x) : '';
-          const yVal = e.y !== undefined ? Math.round(e.y) : '';
-          const period = e.period || '';
-          const clockTime = e.clockTime || '';
-          const situation = e.situation || '';
-          const player = e.player || '';
-          const assist1 = e.assist1 || '';
-          const assist2 = e.assist2 || '';
-          const penaltyReason = e.penaltyReason || '';
-          const penaltyMinutes = e.penaltyMinutes || '';
-          csvContent += `"${gameId}","${game.date}","${game.homeTeam}","${game.awayTeam}",${runScoreHome},${runScoreAway},${runSogHome},${runSogAway},"${game.location || ''}","${game.competition || ''}","${game.matchType || ''}","${period}","${clockTime}","${situation}","${player}","${assist1}","${assist2}","${penaltyReason}","${penaltyMinutes}","${e.time || ''}","${e.type || ''}","${e.team || ''}","${cleanText}","${xVal}","${yVal}"\n`;
-        });
+            if (e.type === 'goal') {
+              if (e.team === game.homeTeam) runScoreHome--;
+              if (e.team === game.awayTeam) runScoreAway--;
+            } else if (e.type === 'shot') {
+              if (e.team === game.homeTeam) runSogHome--;
+              if (e.team === game.awayTeam) runSogAway--;
+            }
+          }
+        }
+
+        for (let i = lines.length - 1; i >= 0; i--) {
+          csvContent += lines[i];
+        }
       } else {
         csvContent += `"${gameId}","${game.date}","${game.homeTeam}","${game.awayTeam}",${game.scoreHome || 0},${game.scoreAway || 0},${game.sogHome || 0},${game.sogAway || 0},"${game.location || ''}","${game.competition || ''}","${game.matchType || ''}",,,,,,,,,,,,,\n`;
       }
