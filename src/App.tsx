@@ -39,6 +39,7 @@ export default function App() {
       {currentScreen === 'main-menu' && (
         <MainMenuScreen
           onNewGame={handleNewGame}
+          onStartScheduledGame={handleStartScheduledGame}
           onLogout={() => setCurrentScreen('splash')}
           onDatabase={() => setCurrentScreen('database')}
           onStats={() => setCurrentScreen('stats')}

@@ -4,12 +4,52 @@ import { defaultSettingsContract } from '../settingsContract';
 
 interface MainMenuScreenProps {
   onNewGame: () => void;
+  onStartScheduledGame: (game: any) => void;
   onLogout: () => void;
   onDatabase: () => void;
   onStats: () => void;
 }
 
-export default function MainMenuScreen({ onNewGame, onLogout, onDatabase, onStats }: MainMenuScreenProps) {
+export default function MainMenuScreen({ onNewGame, onStartScheduledGame, onLogout, onDatabase, onStats }: MainMenuScreenProps) {
+  const [scheduledGames, setScheduledGames] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchScheduledGames = async () => {
+      const gasUrl = localStorage.getItem('blackout_gas_url');
+      if (gasUrl) {
+        try {
+          const res = await fetch(`${gasUrl}?action=getScheduledGames`);
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 1) {
+            const mapped = data.slice(1).map((row, i) => ({
+              id: row[0] || Date.now().toString() + i,
+              homeTeam: row[1] || '',
+              awayTeam: row[2] || '',
+              date: row[3] || '',
+              time: row[4] || '',
+              location: row[5] || '',
+              competition: row[6] || '',
+              matchType: row[7] || ''
+            })).filter(g => g.homeTeam && g.awayTeam);
+            if (mapped.length > 0) {
+              setScheduledGames(mapped);
+              return; // Successfully loaded from GAS
+            }
+          }
+        } catch (e) {}
+      }
+
+      // Fallback to local storage
+      const saved = localStorage.getItem('blackout_scheduled_games');
+      if (saved) {
+        try {
+          setScheduledGames(JSON.parse(saved));
+        } catch (e) {}
+      }
+    };
+    fetchScheduledGames();
+  }, []);
+
   const [videoPlaying, setVideoPlaying] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [dbStatus, setDbStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -260,6 +300,25 @@ export default function MainMenuScreen({ onNewGame, onLogout, onDatabase, onStat
             <Play fill="currentColor" className="w-6 h-6" />
             NEW GAME
           </button>
+
+          {scheduledGames.length > 0 && (
+            <div className="bg-[#050505] border border-[#2A2A2A] rounded-lg p-2 max-h-40 overflow-y-auto flex flex-col gap-2">
+              <span className="text-[10px] font-mono text-gray-500 uppercase px-2 font-bold tracking-widest sticky top-0 bg-[#050505] z-10 py-1">Scheduled Games</span>
+              {scheduledGames.map(game => (
+                <button
+                  key={game.id}
+                  onClick={() => onStartScheduledGame(game)}
+                  className="w-full text-left bg-surface-container-low hover:bg-white/5 border border-outline-variant/30 rounded p-3 transition-colors flex items-center justify-between group"
+                >
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold text-white group-hover:text-tertiary transition-colors">{game.homeTeam} vs {game.awayTeam}</span>
+                    <span className="text-[10px] font-mono text-gray-400">{game.date} • {game.time} • {game.location}</span>
+                  </div>
+                  <Play className="w-4 h-4 text-tertiary opacity-0 group-hover:opacity-100 transition-opacity" />
+                </button>
+              ))}
+            </div>
+          )}
 
           <div className="flex gap-3 w-full">
             <button
