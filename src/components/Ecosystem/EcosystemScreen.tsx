@@ -74,7 +74,7 @@ function useEcosystemData(sheetName: string) {
   return { data, loading, error, saveData, fetchData };
 }
 
-type Tab = 'organizations' | 'leagues' | 'divisions' | 'seasons' | 'clubs' | 'venues';
+type Tab = 'organizations' | 'leagues' | 'divisions' | 'seasons' | 'clubs' | 'venues' | 'users' | 'persons' | 'personJobs' | 'playerProfiles' | 'playerEquipment';
 
 export default function EcosystemScreen({ onBack }: EcosystemScreenProps) {
   const [activeTab, setActiveTab] = useState<Tab>('organizations');
@@ -85,7 +85,12 @@ export default function EcosystemScreen({ onBack }: EcosystemScreenProps) {
     divisions: 'Divisions',
     seasons: 'Seasons',
     clubs: 'Clubs',
-    venues: 'Venues'
+    venues: 'Venues',
+    users: 'Users',
+    persons: 'Persons',
+    personJobs: 'PersonJobs',
+    playerProfiles: 'PlayerProfiles',
+    playerEquipment: 'PlayerEquipment'
   };
 
   const { data, loading, error, saveData, fetchData } = useEcosystemData(sheetNameMap[activeTab]);
@@ -168,6 +173,47 @@ export default function EcosystemScreen({ onBack }: EcosystemScreenProps) {
         >
           <MapPin className="w-4 h-4" />
           Venues
+        </button>
+        {/* Phase 2 Tabs */}
+        <button
+          onClick={() => setActiveTab('users')}
+          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
+            activeTab === 'users' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
+          }`}
+        >
+          Users
+        </button>
+        <button
+          onClick={() => setActiveTab('persons')}
+          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
+            activeTab === 'persons' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
+          }`}
+        >
+          Persons
+        </button>
+        <button
+          onClick={() => setActiveTab('personJobs')}
+          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
+            activeTab === 'personJobs' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
+          }`}
+        >
+          Jobs
+        </button>
+        <button
+          onClick={() => setActiveTab('playerProfiles')}
+          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
+            activeTab === 'playerProfiles' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
+          }`}
+        >
+          Profiles
+        </button>
+        <button
+          onClick={() => setActiveTab('playerEquipment')}
+          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
+            activeTab === 'playerEquipment' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
+          }`}
+        >
+          Equipment
         </button>
       </div>
 

@@ -24,7 +24,17 @@ app.post('/api/login', (req, res) => {
     }
 
     if (email === adminEmail && password === adminPassword) {
-        res.json({ success: true, token: 'dummy-jwt-token' });
+        // Return dummy user object mapping to admin role for Phase 2 integration
+        res.json({
+            success: true,
+            token: 'dummy-jwt-token',
+            user: {
+                id: 'admin-001',
+                email: email,
+                role: 'Admin',
+                personId: 'person-admin-001'
+            }
+        });
     } else {
         res.status(401).json({ success: false, message: 'Invalid credentials' });
     }

@@ -6,11 +6,14 @@ import ScorekeeperScreen from './components/ScorekeeperScreen';
 import DatabaseScreen from './components/DatabaseScreen';
 import StatsScreen from './components/StatsScreen';
 import EcosystemScreen from './components/Ecosystem/EcosystemScreen';
-import { Screen, Player } from './types';
+import MyProfileScreen from './components/MyProfileScreen';
+import PeopleDirectoryScreen from './components/PeopleDirectoryScreen';
+import { Screen, Player, User } from './types';
 import { defaultSettingsContract } from './settingsContract';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('splash');
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [scheduledGameData, setScheduledGameData] = useState<{
     homeTeam: string;
     awayTeam: string;
@@ -35,17 +38,34 @@ export default function App() {
 
   return (
     <div className="w-full min-h-screen bg-background text-on-background font-body overflow-x-hidden selection:bg-tertiary selection:text-on-tertiary">
-      {currentScreen === 'splash' && <LoginScreen onLogin={() => setCurrentScreen('main-menu')} />}
+      {currentScreen === 'splash' && <LoginScreen onLogin={(user) => {
+        setCurrentUser(user);
+        setCurrentScreen('main-menu');
+      }} />}
 
       {currentScreen === 'main-menu' && (
         <MainMenuScreen
+          currentUser={currentUser}
           onNewGame={handleNewGame}
           onStartScheduledGame={handleStartScheduledGame}
-          onLogout={() => setCurrentScreen('splash')}
+          onLogout={() => {
+            setCurrentUser(null);
+            setCurrentScreen('splash');
+          }}
           onDatabase={() => setCurrentScreen('database')}
           onStats={() => setCurrentScreen('stats')}
           onEcosystem={() => setCurrentScreen('ecosystem')}
+          onMyProfile={() => setCurrentScreen('my-profile')}
+          onPeopleDirectory={() => setCurrentScreen('people-directory')}
         />
+      )}
+
+      {currentScreen === 'my-profile' && (
+        <MyProfileScreen currentUser={currentUser} onBack={() => setCurrentScreen('main-menu')} />
+      )}
+
+      {currentScreen === 'people-directory' && (
+        <PeopleDirectoryScreen onBack={() => setCurrentScreen('main-menu')} />
       )}
 
       {currentScreen === 'ecosystem' && (
