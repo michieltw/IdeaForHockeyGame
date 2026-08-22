@@ -1,6 +1,6 @@
 import { getGasUrl, setGasUrl as setGasUrlToCache } from '../utils/gasUrl';
 import { useState, useEffect } from 'react';
-import { ArrowLeft, CheckCircle, XCircle, Database, Loader2, Save, Copy } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, Database, Loader2, Save, Copy, Key } from 'lucide-react';
 
 interface DatabaseScreenProps {
   onBack: () => void;
@@ -392,6 +392,23 @@ export default function DatabaseScreen({ onBack }: DatabaseScreenProps) {
               value={gasUrl}
               onChange={(e) => setGasUrl(e.target.value)}
               placeholder="https://script.google.com/macros/s/..."
+              className="w-full bg-[#050505] border border-[#333] rounded-md px-3 py-3 text-white text-sm font-mono placeholder:text-gray-600 focus:outline-none focus:border-tertiary/50 transition-colors"
+            />
+          </div>
+
+          <div className="flex items-center gap-3 text-tertiary mt-4">
+            <Key className="w-6 h-6" />
+            <h2 className="font-mono text-[14px] font-bold tracking-widest uppercase">API Secret</h2>
+          </div>
+          <p className="text-on-surface-variant text-sm leading-relaxed">
+            Dit is de geheime sleutel die wordt gebruikt om data veilig naar de database te schrijven.
+          </p>
+          <div className="flex flex-col gap-2 mt-2">
+            <input
+              type="text"
+              value={gasSecret}
+              onChange={(e) => setGasSecret(e.target.value)}
+              placeholder="Jouw geheime sleutel"
               className="w-full bg-[#050505] border border-[#333] rounded-md px-3 py-3 text-white text-sm font-mono placeholder:text-gray-600 focus:outline-none focus:border-tertiary/50 transition-colors"
             />
           </div>
