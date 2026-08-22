@@ -4,7 +4,7 @@ import MainMenuScreen from './components/MainMenuScreen';
 import SettingsScreen from './components/SettingsScreen';
 import ScorekeeperScreen from './components/ScorekeeperScreen';
 import DatabaseScreen from './components/DatabaseScreen';
-import StatsScreen from './components/StatsScreen';
+import StandingsAndStatsScreen from './components/StandingsAndStatsScreen';
 import { Screen, Player } from './types';
 import { defaultSettingsContract } from './settingsContract';
 
@@ -41,16 +41,16 @@ export default function App() {
           onNewGame={handleNewGame}
           onLogout={() => setCurrentScreen('splash')}
           onDatabase={() => setCurrentScreen('database')}
-          onStats={() => setCurrentScreen('stats')}
+          onStandings={() => setCurrentScreen('standings')}
         />
+      )}
+
+      {currentScreen === 'standings' && (
+        <StandingsAndStatsScreen onBack={() => setCurrentScreen('main-menu')} />
       )}
 
       {currentScreen === 'database' && (
         <DatabaseScreen onBack={() => setCurrentScreen('main-menu')} />
-      )}
-
-      {currentScreen === 'stats' && (
-        <StatsScreen onBack={() => setCurrentScreen('main-menu')} />
       )}
 
       {currentScreen === 'settings' && (

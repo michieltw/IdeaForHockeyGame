@@ -6,10 +6,10 @@ interface MainMenuScreenProps {
   onNewGame: () => void;
   onLogout: () => void;
   onDatabase: () => void;
-  onStats: () => void;
+  onStandings: () => void;
 }
 
-export default function MainMenuScreen({ onNewGame, onLogout, onDatabase, onStats }: MainMenuScreenProps) {
+export default function MainMenuScreen({ onNewGame, onLogout, onDatabase, onStandings }: MainMenuScreenProps) {
   const [videoPlaying, setVideoPlaying] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [dbStatus, setDbStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -250,13 +250,12 @@ export default function MainMenuScreen({ onNewGame, onLogout, onDatabase, onStat
             <Play fill="currentColor" className="w-6 h-6" />
             NEW GAME
           </button>
-
-          <div className="flex gap-3 w-full">
+          <div className="grid grid-cols-2 gap-3 mt-1">
             <button
               onClick={onDatabase}
-              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[14px] font-bold tracking-widest py-3.5 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1.5 uppercase shadow-md inner-glow relative"
+              className="w-full bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3.5 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1.5 uppercase shadow-md inner-glow relative"
             >
-              <DatabaseIcon className="w-5 h-5" />
+              <DatabaseIcon className="w-4 h-4" />
               DATABASE
               {dbStatus === 'success' && (
                 <CheckCircle className="w-3 h-3 text-green-500 absolute top-2 right-2" />
@@ -265,12 +264,13 @@ export default function MainMenuScreen({ onNewGame, onLogout, onDatabase, onStat
                 <XCircle className="w-3 h-3 text-error absolute top-2 right-2" />
               )}
             </button>
+
             <button
-              onClick={onStats}
-              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[14px] font-bold tracking-widest py-3.5 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1.5 uppercase shadow-md inner-glow"
+              onClick={onStandings}
+              className="w-full bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3.5 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1.5 uppercase shadow-md inner-glow"
             >
-              <Trophy className="w-5 h-5 text-tertiary" />
-              STATS
+              <Trophy className="w-4 h-4 text-tertiary" />
+              STANDINGS & STATS
             </button>
           </div>
 
