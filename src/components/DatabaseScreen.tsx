@@ -9,6 +9,49 @@ interface DatabaseScreenProps {
 const generateGasCodeSnippet = (token: string) => `function setupSheet() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
+  // Phase 1 Ecosystem Tabs
+  let orgSheet = ss.getSheetByName("Organizations");
+  if (!orgSheet) {
+    orgSheet = ss.insertSheet("Organizations");
+    orgSheet.appendRow(["OrgID", "Name", "Contact"]);
+    orgSheet.getRange("A1:C1").setFontWeight("bold");
+  }
+
+  let leaguesSheet = ss.getSheetByName("Leagues");
+  if (!leaguesSheet) {
+    leaguesSheet = ss.insertSheet("Leagues");
+    leaguesSheet.appendRow(["LeagueID", "OrgID", "Name", "Level"]);
+    leaguesSheet.getRange("A1:D1").setFontWeight("bold");
+  }
+
+  let divisionsSheet = ss.getSheetByName("Divisions");
+  if (!divisionsSheet) {
+    divisionsSheet = ss.insertSheet("Divisions");
+    divisionsSheet.appendRow(["DivisionID", "LeagueID", "Name"]);
+    divisionsSheet.getRange("A1:C1").setFontWeight("bold");
+  }
+
+  let seasonsSheet = ss.getSheetByName("Seasons");
+  if (!seasonsSheet) {
+    seasonsSheet = ss.insertSheet("Seasons");
+    seasonsSheet.appendRow(["SeasonID", "Name", "StartDate", "EndDate"]);
+    seasonsSheet.getRange("A1:D1").setFontWeight("bold");
+  }
+
+  let clubsSheet = ss.getSheetByName("Clubs");
+  if (!clubsSheet) {
+    clubsSheet = ss.insertSheet("Clubs");
+    clubsSheet.appendRow(["ClubID", "Name", "Founded"]);
+    clubsSheet.getRange("A1:C1").setFontWeight("bold");
+  }
+
+  let venuesSheet = ss.getSheetByName("Venues");
+  if (!venuesSheet) {
+    venuesSheet = ss.insertSheet("Venues");
+    venuesSheet.appendRow(["VenueID", "Name", "Address", "Capacity"]);
+    venuesSheet.getRange("A1:D1").setFontWeight("bold");
+  }
+
   // Settings Tab
   let settingsSheet = ss.getSheetByName("Settings");
   if (!settingsSheet) {
@@ -257,6 +300,25 @@ function doPost(e) {
       }
       return value;
     };
+
+    if (data.action === 'saveEcosystemData') {
+      const { sheetName, rowData } = data;
+      const sheet = ss.getSheetByName(sheetName);
+      if (!sheet) throw new Error("Sheet niet gevonden: " + sheetName);
+
+      if (Array.isArray(rowData)) {
+        sheet.appendRow(rowData.map(sanitizeField));
+      }
+      return ContentService.createTextOutput(JSON.stringify({status: "Success"})).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (data.action === 'getEcosystemData') {
+      const { sheetName } = data;
+      const sheet = ss.getSheetByName(sheetName);
+      if (!sheet) throw new Error("Sheet niet gevonden: " + sheetName);
+      const values = sheet.getDataRange().getValues();
+      return ContentService.createTextOutput(JSON.stringify({status: "Success", data: values})).setMimeType(ContentService.MimeType.JSON);
+    }
 
     if (data.action === 'saveGame' || data.logs) {
       const logsSheet = ss.getSheetByName("ActionLogs");

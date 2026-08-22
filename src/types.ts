@@ -1,4 +1,4 @@
-export type Screen = 'splash' | 'main-menu' | 'settings' | 'scorekeeper' | 'database' | 'stats';
+export type Screen = 'splash' | 'main-menu' | 'settings' | 'scorekeeper' | 'database' | 'stats' | 'ecosystem';
 
 export interface Player {
   id: string;

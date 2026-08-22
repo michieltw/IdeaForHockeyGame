@@ -5,6 +5,7 @@ import SettingsScreen from './components/SettingsScreen';
 import ScorekeeperScreen from './components/ScorekeeperScreen';
 import DatabaseScreen from './components/DatabaseScreen';
 import StatsScreen from './components/StatsScreen';
+import EcosystemScreen from './components/Ecosystem/EcosystemScreen';
 import { Screen, Player } from './types';
 import { defaultSettingsContract } from './settingsContract';
 
@@ -43,7 +44,12 @@ export default function App() {
           onLogout={() => setCurrentScreen('splash')}
           onDatabase={() => setCurrentScreen('database')}
           onStats={() => setCurrentScreen('stats')}
+          onEcosystem={() => setCurrentScreen('ecosystem')}
         />
+      )}
+
+      {currentScreen === 'ecosystem' && (
+        <EcosystemScreen onBack={() => setCurrentScreen('main-menu')} />
       )}
 
       {currentScreen === 'database' && (

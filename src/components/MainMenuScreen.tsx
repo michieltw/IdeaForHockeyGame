@@ -1,6 +1,6 @@
 import { getGasUrl } from '../utils/gasUrl';
 import { useState, useRef, useEffect } from 'react';
-import { Play, Download, Upload, LogOut, User, Database as DatabaseIcon, CheckCircle, XCircle, Trophy } from 'lucide-react';
+import { Play, Download, Upload, LogOut, User, Database as DatabaseIcon, CheckCircle, XCircle, Trophy, Globe } from 'lucide-react';
 import { defaultSettingsContract } from '../settingsContract';
 
 interface MainMenuScreenProps {
@@ -9,9 +9,10 @@ interface MainMenuScreenProps {
   onLogout: () => void;
   onDatabase: () => void;
   onStats: () => void;
+  onEcosystem?: () => void;
 }
 
-export default function MainMenuScreen({ onNewGame, onStartScheduledGame, onLogout, onDatabase, onStats }: MainMenuScreenProps) {
+export default function MainMenuScreen({ onNewGame, onStartScheduledGame, onLogout, onDatabase, onStats, onEcosystem }: MainMenuScreenProps) {
   const [scheduledGames, setScheduledGames] = useState<any[]>([]);
 
   useEffect(() => {
@@ -328,7 +329,7 @@ export default function MainMenuScreen({ onNewGame, onStartScheduledGame, onLogo
           <div className="flex gap-3 w-full">
             <button
               onClick={onDatabase}
-              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[14px] font-bold tracking-widest py-3.5 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1.5 uppercase shadow-md inner-glow relative"
+              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[12px] font-bold tracking-widest py-3.5 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1.5 uppercase shadow-md inner-glow relative"
             >
               <DatabaseIcon className="w-5 h-5" />
               DATABASE
@@ -341,10 +342,17 @@ export default function MainMenuScreen({ onNewGame, onStartScheduledGame, onLogo
             </button>
             <button
               onClick={onStats}
-              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[14px] font-bold tracking-widest py-3.5 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1.5 uppercase shadow-md inner-glow"
+              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[12px] font-bold tracking-widest py-3.5 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1.5 uppercase shadow-md inner-glow"
             >
               <Trophy className="w-5 h-5 text-tertiary" />
               STATS
+            </button>
+            <button
+              onClick={onEcosystem}
+              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[12px] font-bold tracking-widest py-3.5 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1.5 uppercase shadow-md inner-glow"
+            >
+              <Globe className="w-5 h-5 text-tertiary" />
+              ECOSYSTEM
             </button>
           </div>
 
