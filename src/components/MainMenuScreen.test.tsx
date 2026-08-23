@@ -11,6 +11,7 @@ describe('MainMenuScreen', () => {
     onStats: vi.fn(),
     onCalendar: vi.fn(),
     onLineupBuilder: vi.fn(),
+    onDraftMode: vi.fn(),
   };
 
   beforeEach(() => {

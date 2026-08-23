@@ -88,8 +88,8 @@ const generateGasCodeSnippet = (token: string) => `function setupSheet() {
   let standingsSheet = ss.getSheetByName("Standings");
   if (!standingsSheet) {
     standingsSheet = ss.insertSheet("Standings");
-    standingsSheet.appendRow(["Team", "GP", "W", "L", "OTL", "PTS", "GF", "GA", "DIFF"]);
-    standingsSheet.getRange("A1:I1").setFontWeight("bold");
+    standingsSheet.appendRow(["Team", "GP", "W", "L", "OTL", "PTS", "ROW", "GF", "GA", "DIFF"]);
+    standingsSheet.getRange("A1:J1").setFontWeight("bold");
   }
 
   // PlayerStats Tab
@@ -129,6 +129,14 @@ const generateGasCodeSnippet = (token: string) => `function setupSheet() {
     lineupsSheet.appendRow(["EventID", "PersonID", "TeamID", "UnitType"]);
     lineupsSheet.getRange("A1:D1").setFontWeight("bold");
   }
+
+  // Phase 6: Drafts
+  let draftsSheet = ss.getSheetByName("DraftPicks");
+  if (!draftsSheet) {
+    draftsSheet = ss.insertSheet("DraftPicks");
+    draftsSheet.appendRow(["TeamID", "OriginalTeamID", "Year", "Round", "PickNumber", "PersonID"]);
+    draftsSheet.getRange("A1:F1").setFontWeight("bold");
+  }
 }
 
 function calculateStandingsAndStats() {
@@ -156,8 +164,8 @@ function calculateStandingsAndStats() {
     const homeScore = parseInt(row[4]) || 0;
     const awayScore = parseInt(row[5]) || 0;
 
-    if (!standings[homeTeam]) standings[homeTeam] = { GP: 0, W: 0, L: 0, OTL: 0, PTS: 0, GF: 0, GA: 0 };
-    if (!standings[awayTeam]) standings[awayTeam] = { GP: 0, W: 0, L: 0, OTL: 0, PTS: 0, GF: 0, GA: 0 };
+    if (!standings[homeTeam]) standings[homeTeam] = { GP: 0, W: 0, L: 0, OTL: 0, PTS: 0, ROW: 0, GF: 0, GA: 0 };
+    if (!standings[awayTeam]) standings[awayTeam] = { GP: 0, W: 0, L: 0, OTL: 0, PTS: 0, ROW: 0, GF: 0, GA: 0 };
 
     standings[homeTeam].GP++;
     standings[awayTeam].GP++;
@@ -170,10 +178,12 @@ function calculateStandingsAndStats() {
     if (homeScore > awayScore) {
       standings[homeTeam].W++;
       standings[homeTeam].PTS += 2;
+      standings[homeTeam].ROW++;
       standings[awayTeam].L++; // Simplification: OTL requires knowing if game went to OT
     } else if (awayScore > homeScore) {
       standings[awayTeam].W++;
       standings[awayTeam].PTS += 2;
+      standings[awayTeam].ROW++;
       standings[homeTeam].L++;
     } else {
       // Tie
@@ -185,15 +195,15 @@ function calculateStandingsAndStats() {
   }
 
   // Clear and write standings
-  standingsSheet.getRange(2, 1, standingsSheet.getLastRow() || 2, 9).clearContent();
+  standingsSheet.getRange(2, 1, standingsSheet.getLastRow() || 2, 10).clearContent();
   const standingsArray = Object.keys(standings).map(team => {
     const s = standings[team];
-    return [team, s.GP, s.W, s.L, s.OTL, s.PTS, s.GF, s.GA, s.GF - s.GA];
+    return [team, s.GP, s.W, s.L, s.OTL, s.PTS, s.ROW, s.GF, s.GA, s.GF - s.GA];
   });
-  // Sort by PTS descending
-  standingsArray.sort((a, b) => b[5] - a[5]);
+  // Sort by PTS descending, then ROW, then DIFF
+  standingsArray.sort((a, b) => b[5] - a[5] || b[6] - a[6] || b[9] - a[9]);
   if (standingsArray.length > 0) {
-    standingsSheet.getRange(2, 1, standingsArray.length, 9).setValues(standingsArray);
+    standingsSheet.getRange(2, 1, standingsArray.length, 10).setValues(standingsArray);
   }
 
   // Calculate Player Stats

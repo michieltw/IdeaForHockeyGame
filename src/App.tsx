@@ -13,6 +13,7 @@ import RosterBuilderScreen from './components/RosterBuilderScreen';
 import FreeAgencyScreen from './components/FreeAgencyScreen';
 import CalendarScreen from './components/CalendarScreen';
 import LineupBuilderScreen from './components/LineupBuilderScreen';
+import DraftModeScreen from './components/DraftModeScreen';
 import { Screen, Player, User } from './types';
 import { defaultSettingsContract } from './settingsContract';
 
@@ -68,6 +69,7 @@ export default function App() {
           onFreeAgency={() => setCurrentScreen('free-agency')}
           onCalendar={() => setCurrentScreen('calendar')}
           onLineupBuilder={() => setCurrentScreen('lineup-builder')}
+          onDraftMode={() => setCurrentScreen('draft-mode')}
         />
       )}
 
@@ -77,6 +79,10 @@ export default function App() {
 
       {currentScreen === 'lineup-builder' && (
         <LineupBuilderScreen onBack={() => setCurrentScreen('main-menu')} />
+      )}
+
+      {currentScreen === 'draft-mode' && (
+        <DraftModeScreen onBack={() => setCurrentScreen('main-menu')} />
       )}
 
       {currentScreen === 'team-profile' && (
