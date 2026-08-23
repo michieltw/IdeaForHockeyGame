@@ -62,6 +62,26 @@ app.post('/api/login', (req, res) => {
     }
 });
 
+app.post('/api/signup', (req, res) => {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+        return res.status(400).json({ success: false, message: 'Missing required fields' });
+    }
+
+    // For the mock backend, simply return success and sign them in as a Player
+    res.json({
+        success: true,
+        token: 'dummy-jwt-token',
+        user: {
+            id: 'new-user-' + Date.now(),
+            email: email,
+            role: 'Player',
+            personId: 'person-new-' + Date.now()
+        }
+    });
+});
+
 // Fallback to React index.html for SPA routing
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mail, Lock, LogIn } from 'lucide-react';
+import { Mail, Lock, LogIn, User as UserIcon } from 'lucide-react';
 import { User } from '../types';
 
 interface LoginScreenProps {
@@ -7,6 +7,8 @@ interface LoginScreenProps {
 }
 
 export default function LoginScreen({ onLogin }: LoginScreenProps) {
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -14,12 +16,17 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/login', {
+      const endpoint = isSignUp ? '/api/signup' : '/api/login';
+      const body = isSignUp
+        ? JSON.stringify({ name, email, password })
+        : JSON.stringify({ email, password });
+
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body,
       });
 
       if (res.ok) {
@@ -28,13 +35,13 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
           setError('');
           onLogin(data.user);
         } else {
-          setError(data.message || 'Invalid email or password');
+          setError(data.message || (isSignUp ? 'Sign up failed' : 'Invalid email or password'));
         }
       } else {
-        setError('Invalid email or password');
+        setError(isSignUp ? 'Sign up failed' : 'Invalid email or password');
       }
     } catch (err) {
-      setError('An error occurred during login');
+      setError(`An error occurred during ${isSignUp ? 'sign up' : 'login'}`);
     }
   };
 
@@ -71,6 +78,27 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
               </div>
             )}
 
+            {/* Name Input (Sign Up Only) */}
+            {isSignUp && (
+              <div className="flex flex-col gap-1">
+                <label className="font-mono text-[12px] font-bold tracking-widest text-on-surface-variant uppercase" htmlFor="name">
+                  Name
+                </label>
+                <div className="relative flex items-center bg-surface-container-lowest border border-outline-variant rounded input-focus-ring transition-all duration-200">
+                  <UserIcon className="w-5 h-5 text-on-surface-variant absolute left-4 pointer-events-none" />
+                  <input
+                    className="w-full bg-transparent border-none text-on-surface pl-12 pr-4 py-3 focus:ring-0 placeholder:text-outline outline-none"
+                    id="name"
+                    placeholder="Full Name"
+                    required={isSignUp}
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+
             {/* Email Input */}
             <div className="flex flex-col gap-1">
               <label className="font-mono text-[12px] font-bold tracking-widest text-on-surface-variant uppercase" htmlFor="email">
@@ -96,9 +124,11 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                 <label className="font-mono text-[12px] font-bold tracking-widest text-on-surface-variant uppercase" htmlFor="password">
                   Password
                 </label>
-                <button type="button" className="font-mono text-[12px] font-bold tracking-widest text-tertiary hover:text-tertiary-fixed-dim transition-colors uppercase">
-                  Forgot?
-                </button>
+                {!isSignUp && (
+                  <button type="button" className="font-mono text-[12px] font-bold tracking-widest text-tertiary hover:text-tertiary-fixed-dim transition-colors uppercase">
+                    Forgot?
+                  </button>
+                )}
               </div>
               <div className="relative flex items-center bg-surface-container-lowest border border-outline-variant rounded input-focus-ring transition-all duration-200">
                 <Lock className="w-5 h-5 text-on-surface-variant absolute left-4 pointer-events-none" />
@@ -120,13 +150,23 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
               type="submit"
             >
               <LogIn className="w-4 h-4" strokeWidth={3} />
-              LOGIN
+              {isSignUp ? 'SIGN UP' : 'LOGIN'}
             </button>
           </form>
 
           <div className="flex flex-col items-center gap-4 mt-2">
             <p className="text-[16px] text-on-surface-variant">
-              Don't have an account? <button className="text-tertiary font-bold hover:underline underline-offset-4">Sign up</button>
+              {isSignUp ? "Already have an account?" : "Don't have an account?"}{' '}
+              <button
+                type="button"
+                className="text-tertiary font-bold hover:underline underline-offset-4"
+                onClick={() => {
+                  setIsSignUp(!isSignUp);
+                  setError('');
+                }}
+              >
+                {isSignUp ? 'Login' : 'Sign up'}
+              </button>
             </p>
           </div>
         </div>
