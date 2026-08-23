@@ -1,4 +1,4 @@
-export type Screen = 'splash' | 'main-menu' | 'settings' | 'scorekeeper' | 'database' | 'stats' | 'ecosystem' | 'my-profile' | 'people-directory' | 'team-profile' | 'roster-builder' | 'free-agency';
+export type Screen = 'splash' | 'main-menu' | 'settings' | 'scorekeeper' | 'database' | 'stats' | 'ecosystem' | 'my-profile' | 'people-directory' | 'team-profile' | 'roster-builder' | 'free-agency' | 'calendar' | 'lineup-builder';
 
 export interface Team {
   id: string;
@@ -76,6 +76,32 @@ export interface ScheduledGame {
   matchType?: string;
   homeRoster?: Player[];
   awayRoster?: Player[];
+}
+
+export interface EcosystemEvent {
+  id: string;
+  venueId?: string;
+  seasonId?: string;
+  phaseId?: string;
+  eventType: 'Game' | 'Practice' | 'Event';
+  homeTeamId?: string;
+  awayTeamId?: string;
+  tournamentMode?: boolean;
+  date: string;
+  time: string;
+}
+
+export interface RSVP {
+  eventId: string;
+  personId: string;
+  status: 'Attending' | 'Not Attending' | 'Maybe';
+}
+
+export interface Lineup {
+  eventId: string;
+  personId: string;
+  teamId: string;
+  unitType: 'Even Strength' | 'PK1' | 'PK2' | 'PP1' | 'PP2' | 'Starting Goalie' | 'Backup Goalie' | string;
 }
 
 export interface GameSettings {

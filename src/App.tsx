@@ -11,6 +11,8 @@ import PeopleDirectoryScreen from './components/PeopleDirectoryScreen';
 import TeamProfileScreen from './components/TeamProfileScreen';
 import RosterBuilderScreen from './components/RosterBuilderScreen';
 import FreeAgencyScreen from './components/FreeAgencyScreen';
+import CalendarScreen from './components/CalendarScreen';
+import LineupBuilderScreen from './components/LineupBuilderScreen';
 import { Screen, Player, User } from './types';
 import { defaultSettingsContract } from './settingsContract';
 
@@ -63,7 +65,17 @@ export default function App() {
           onTeamProfile={() => setCurrentScreen('team-profile')}
           onRosterBuilder={() => setCurrentScreen('roster-builder')}
           onFreeAgency={() => setCurrentScreen('free-agency')}
+          onCalendar={() => setCurrentScreen('calendar')}
+          onLineupBuilder={() => setCurrentScreen('lineup-builder')}
         />
+      )}
+
+      {currentScreen === 'calendar' && (
+        <CalendarScreen onBack={() => setCurrentScreen('main-menu')} />
+      )}
+
+      {currentScreen === 'lineup-builder' && (
+        <LineupBuilderScreen onBack={() => setCurrentScreen('main-menu')} />
       )}
 
       {currentScreen === 'team-profile' && (

@@ -9,6 +9,8 @@ describe('MainMenuScreen', () => {
     onLogout: vi.fn(),
     onDatabase: vi.fn(),
     onStats: vi.fn(),
+    onCalendar: vi.fn(),
+    onLineupBuilder: vi.fn(),
   };
 
   beforeEach(() => {
