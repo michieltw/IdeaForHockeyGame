@@ -18,6 +18,7 @@ import { Screen, Player, User } from './types';
 import { defaultSettingsContract } from './settingsContract';
 
 export default function App() {
+  const [viewedPerson, setViewedPerson] = useState<any>(null);
   const [currentScreen, setCurrentScreen] = useState<Screen>('splash');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [scheduledGameData, setScheduledGameData] = useState<{
@@ -62,7 +63,7 @@ export default function App() {
           onDatabase={() => setCurrentScreen('database')}
           onStats={() => setCurrentScreen('stats')}
           onEcosystem={() => setCurrentScreen('ecosystem')}
-          onMyProfile={() => setCurrentScreen('my-profile')}
+          onMyProfile={() => { setViewedPerson(null); setCurrentScreen('my-profile'); }}
           onPeopleDirectory={() => setCurrentScreen('people-directory')}
           onTeamProfile={() => setCurrentScreen('team-profile')}
           onRosterBuilder={() => setCurrentScreen('roster-builder')}
@@ -98,11 +99,11 @@ export default function App() {
       )}
 
       {currentScreen === 'my-profile' && (
-        <MyProfileScreen currentUser={currentUser} onBack={() => setCurrentScreen('main-menu')} />
+        <MyProfileScreen currentUser={currentUser} viewedPerson={viewedPerson} onBack={() => { setViewedPerson(null); setCurrentScreen('main-menu'); }} />
       )}
 
       {currentScreen === 'people-directory' && (
-        <PeopleDirectoryScreen onBack={() => setCurrentScreen('main-menu')} />
+        <PeopleDirectoryScreen onBack={() => setCurrentScreen('main-menu')} onViewPerson={(person) => { setViewedPerson(person); setCurrentScreen('my-profile'); }} />
       )}
 
       {currentScreen === 'ecosystem' && (

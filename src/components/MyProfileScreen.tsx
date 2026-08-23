@@ -3,11 +3,14 @@ import { ArrowLeft, User as UserIcon, Briefcase, Ruler, Shield, Plus, Edit2, Cal
 import { User, Achievement, Award } from '../types';
 
 interface MyProfileScreenProps {
+  viewedPerson?: any;
   currentUser: User | null;
   onBack: () => void;
 }
 
-export default function MyProfileScreen({ currentUser, onBack }: MyProfileScreenProps) {
+export default function MyProfileScreen({ currentUser, viewedPerson, onBack }: MyProfileScreenProps) {
+  const isOwnProfile = !viewedPerson || (currentUser && viewedPerson.id === currentUser.personId);
+  const displayName = viewedPerson ? viewedPerson.name : (currentUser?.email || "My Profile");
   const [activeTab, setActiveTab] = useState<'details' | 'jobs' | 'equipment' | 'events' | 'achievements'>('details');
   const [rsvps, setRsvps] = useState<Record<string, string>>({
     'evt-1': 'Maybe',
@@ -127,31 +130,40 @@ export default function MyProfileScreen({ currentUser, onBack }: MyProfileScreen
         <div className="bg-[#050505] border border-[#2A2A2A] rounded-lg p-6">
             {activeTab === 'details' && (
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-white font-bold mb-2">Personal & Physical Details</h3>
+                    <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-white font-bold">Personal & Physical Details</h3>
+                        {isOwnProfile && (
+                            <button className="text-tertiary flex items-center gap-1 text-xs font-mono uppercase tracking-widest hover:brightness-110">
+                                <Edit2 className="w-3 h-3" /> Edit
+                            </button>
+                        )}
+                    </div>
                     <div className="grid grid-cols-2 gap-4 text-sm font-mono text-on-surface-variant">
                         <div>
                             <span className="block text-[10px] uppercase text-gray-500 mb-1">Birthdate</span>
-                            <span className="text-white">1990-01-01</span>
+                            <span className="text-white">{viewedPerson?.birthdate || "1990-01-01"}</span>
                         </div>
-                        <div>
-                            <span className="block text-[10px] uppercase text-gray-500 mb-1">Phone</span>
-                            <span className="text-white">+1 555-0198</span>
-                        </div>
+                        {isOwnProfile && (
+                          <div>
+                              <span className="block text-[10px] uppercase text-gray-500 mb-1">Phone</span>
+                              <span className="text-white">{viewedPerson?.phone || "+1 555-0198"}</span>
+                          </div>
+                        )}
                         <div>
                             <span className="block text-[10px] uppercase text-gray-500 mb-1">Height</span>
-                            <span className="text-white">6'1"</span>
+                            <span className="text-white">{viewedPerson?.height || "6'1\""}</span>
                         </div>
                         <div>
                             <span className="block text-[10px] uppercase text-gray-500 mb-1">Weight</span>
-                            <span className="text-white">190 lbs</span>
+                            <span className="text-white">{viewedPerson?.weight || "190 lbs"}</span>
                         </div>
                         <div>
                             <span className="block text-[10px] uppercase text-gray-500 mb-1">Handedness</span>
-                            <span className="text-white">Right</span>
+                            <span className="text-white">{viewedPerson?.handedness || "Right"}</span>
                         </div>
                         <div>
                             <span className="block text-[10px] uppercase text-gray-500 mb-1">Status</span>
-                            <span className="text-tertiary">Active</span>
+                            <span className="text-tertiary">{viewedPerson?.status || "Active"}</span>
                         </div>
                     </div>
                 </div>
@@ -161,39 +173,60 @@ export default function MyProfileScreen({ currentUser, onBack }: MyProfileScreen
                 <div className="flex flex-col gap-4">
                     <div className="flex items-center justify-between mb-2">
                         <h3 className="text-white font-bold">Assigned Jobs & Roles</h3>
-                        <button className="text-tertiary flex items-center gap-1 text-xs font-mono uppercase tracking-widest hover:brightness-110">
-                            <Plus className="w-3 h-3" /> Add Job
-                        </button>
+                        {isOwnProfile && (
+                            <button className="text-tertiary flex items-center gap-1 text-xs font-mono uppercase tracking-widest hover:brightness-110">
+                                <Plus className="w-3 h-3" /> Add Job
+                            </button>
+                        )}
                     </div>
                     <div className="bg-surface-container-low border border-[#2A2A2A] rounded p-4 flex flex-col gap-1">
                         <div className="flex justify-between items-start">
-                            <span className="text-white font-bold">Head Coach</span>
-                            <span className="text-xs bg-[#2A2A2A] text-gray-300 px-2 py-1 rounded">Blackout HC</span>
+                            <span className="text-white font-bold">{viewedPerson?.job || "Head Coach"}</span>
+                            <span className="text-xs bg-[#2A2A2A] text-gray-300 px-2 py-1 rounded">{viewedPerson?.club || "Blackout HC"}</span>
                         </div>
-                        <span className="text-sm text-on-surface-variant">Role: Coach</span>
+                        <span className="text-sm text-on-surface-variant">Role: {viewedPerson?.role || "Coach"}</span>
                     </div>
                 </div>
             )}
 
             {activeTab === 'equipment' && (
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-white font-bold mb-2">Preferred Equipment & Partners</h3>
+                    <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-white font-bold">Preferred Equipment & Partners</h3>
+                        {isOwnProfile && (
+                            <button className="text-tertiary flex items-center gap-1 text-xs font-mono uppercase tracking-widest hover:brightness-110">
+                                <Edit2 className="w-3 h-3" /> Edit
+                            </button>
+                        )}
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="bg-surface-container-low border border-[#2A2A2A] rounded p-4 flex flex-col gap-1">
                             <span className="text-[10px] uppercase font-mono tracking-widest text-gray-500">Stick Brand</span>
-                            <span className="text-white font-bold">Bauer</span>
+                            <span className="text-white font-bold">{viewedPerson?.equipment?.stickBrand || "Bauer"}</span>
+                        </div>
+                        <div className="bg-surface-container-low border border-[#2A2A2A] rounded p-4 flex flex-col gap-1">
+                            <span className="text-[10px] uppercase font-mono tracking-widest text-gray-500">Stick Model</span>
+                            <span className="text-white font-bold">{viewedPerson?.equipment?.stickModel || "Nexus Sync"}</span>
+                        </div>
+                        <div className="bg-surface-container-low border border-[#2A2A2A] rounded p-4 flex flex-col gap-1">
+                            <span className="text-[10px] uppercase font-mono tracking-widest text-gray-500">Stick Flex</span>
+                            <span className="text-white font-bold">{viewedPerson?.equipment?.stickFlex || "87"}</span>
+                        </div>
+                        <div className="bg-surface-container-low border border-[#2A2A2A] rounded p-4 flex flex-col gap-1">
+                            <span className="text-[10px] uppercase font-mono tracking-widest text-gray-500">Stick Curve</span>
+                            <span className="text-white font-bold">{viewedPerson?.equipment?.stickCurve || "P92"}</span>
                         </div>
                         <div className="bg-surface-container-low border border-[#2A2A2A] rounded p-4 flex flex-col gap-1">
                             <span className="text-[10px] uppercase font-mono tracking-widest text-gray-500">Skate Brand</span>
-                            <span className="text-white font-bold">CCM</span>
+                            <span className="text-white font-bold">{viewedPerson?.equipment?.skateBrand || "CCM"}</span>
                         </div>
                         <div className="bg-surface-container-low border border-[#2A2A2A] rounded p-4 flex flex-col gap-1">
                             <span className="text-[10px] uppercase font-mono tracking-widest text-gray-500">Helmet Brand</span>
-                            <span className="text-white font-bold">Warrior</span>
+                            <span className="text-white font-bold">{viewedPerson?.equipment?.helmetBrand || "Warrior"}</span>
                         </div>
                         <div className="bg-surface-container-low border border-[#2A2A2A] rounded p-4 flex flex-col gap-1 border-t-tertiary">
                             <span className="text-[10px] uppercase font-mono tracking-widest text-tertiary">Preferred Retailer</span>
-                            <span className="text-white font-bold">HockeyStore</span>
+                            <span className="text-white font-bold">{viewedPerson?.equipment?.retailer || "HockeyStore"}</span>
                         </div>
                     </div>
                 </div>

@@ -91,6 +91,9 @@ export interface PlayerEquipment {
   id: string;
   personId: string;
   stickBrand?: string;
+  stickModel?: string;
+  stickFlex?: string;
+  stickCurve?: string;
   skateBrand?: string;
   helmetBrand?: string;
   retailer?: string;
