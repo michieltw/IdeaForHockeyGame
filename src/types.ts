@@ -1,4 +1,4 @@
-export type Screen = 'splash' | 'main-menu' | 'settings' | 'scorekeeper' | 'database' | 'stats' | 'ecosystem' | 'my-profile' | 'people-directory' | 'team-profile' | 'roster-builder' | 'free-agency' | 'calendar' | 'lineup-builder';
+export type Screen = 'splash' | 'main-menu' | 'settings' | 'scorekeeper' | 'database' | 'stats' | 'ecosystem' | 'my-profile' | 'people-directory' | 'team-profile' | 'roster-builder' | 'free-agency' | 'calendar' | 'lineup-builder' | 'draft-mode';
 
 export interface Team {
   id: string;
@@ -102,6 +102,15 @@ export interface Lineup {
   personId: string;
   teamId: string;
   unitType: 'Even Strength' | 'PK1' | 'PK2' | 'PP1' | 'PP2' | 'Starting Goalie' | 'Backup Goalie' | string;
+}
+
+export interface DraftPick {
+  teamId: string;
+  originalTeamId?: string;
+  year: number;
+  round: number;
+  pickNumber: number;
+  personId: string;
 }
 
 export interface GameSettings {
