@@ -386,53 +386,61 @@ export default function MainMenuScreen({ currentUser, onNewGame, onStartSchedule
           </div>
 
           {/* Phase 3, 4, 6 Features */}
-          <div className="flex gap-3 w-full mt-1">
-            <button
-              onClick={onTeamProfile}
-              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
-            >
-              <Shield className="w-4 h-4 text-tertiary" />
-              Teams
-            </button>
-            <button
-              onClick={onRosterBuilder}
-              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
-            >
-              <Wrench className="w-4 h-4 text-tertiary" />
-              Rosters
-            </button>
-            <button
-              onClick={onFreeAgency}
-              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
-            >
-              <RefreshCcw className="w-4 h-4 text-tertiary" />
-              Free Agency
-            </button>
-          </div>
+          {(currentUser && (currentUser.role === 'Admin' || currentUser.role === 'League Manager' || currentUser.role === 'Team Manager')) && (
+            <div className="flex gap-3 w-full mt-1">
+              <button
+                onClick={onTeamProfile}
+                className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
+              >
+                <Shield className="w-4 h-4 text-tertiary" />
+                Teams
+              </button>
+              <button
+                onClick={onRosterBuilder}
+                className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
+              >
+                <Wrench className="w-4 h-4 text-tertiary" />
+                Rosters
+              </button>
+              {(currentUser && (currentUser.role === 'Admin' || currentUser.role === 'League Manager')) && (
+                <button
+                  onClick={onFreeAgency}
+                  className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
+                >
+                  <RefreshCcw className="w-4 h-4 text-tertiary" />
+                  Free Agency
+                </button>
+              )}
+            </div>
+          )}
 
-          <div className="flex gap-3 w-full mt-1">
-            <button
-              onClick={onCalendar}
-              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
-            >
-              <Calendar className="w-4 h-4 text-tertiary" />
-              Calendar
-            </button>
-            <button
-              onClick={onLineupBuilder}
-              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
-            >
-              <Users className="w-4 h-4 text-tertiary" />
-              Lineups
-            </button>
-            <button
-              onClick={onDraftMode}
-              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
-            >
-              <Trophy className="w-4 h-4 text-tertiary" />
-              Draft
-            </button>
-          </div>
+          {(currentUser && (currentUser.role === 'Admin' || currentUser.role === 'League Manager' || currentUser.role === 'Team Manager')) && (
+            <div className="flex gap-3 w-full mt-1">
+              <button
+                onClick={onCalendar}
+                className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
+              >
+                <Calendar className="w-4 h-4 text-tertiary" />
+                Calendar
+              </button>
+              <button
+                onClick={onLineupBuilder}
+                className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
+              >
+                <Users className="w-4 h-4 text-tertiary" />
+                Lineups
+              </button>
+              {(currentUser && (currentUser.role === 'Admin' || currentUser.role === 'League Manager')) && (
+                <button
+                  onClick={onDraftMode}
+                  className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
+                >
+                  <Trophy className="w-4 h-4 text-tertiary" />
+                  Draft
+                </button>
+              )}
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-3 mt-1">
             <input

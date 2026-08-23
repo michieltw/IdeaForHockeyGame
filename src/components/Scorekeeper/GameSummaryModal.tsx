@@ -50,6 +50,7 @@ interface GameSummaryModalProps {
   isOpen: boolean;
   onClose: () => void;
   gameState: GameState;
+  isOfficialGame?: boolean;
   onUpdateEvents: (newEvents: GameEvent[]) => void;
   onFinishGame: () => void;
   homeTeam?: string;
@@ -74,6 +75,7 @@ export default function GameSummaryModal({
   isOpen,
   onClose,
   gameState,
+  isOfficialGame,
   onUpdateEvents,
   onFinishGame,
   homeTeam = '',
@@ -212,7 +214,8 @@ export default function GameSummaryModal({
           AwayScore: gameState.scoreAway,
           HomeSOG: gameState.sogHome,
           AwaySOG: gameState.sogAway,
-          Location: location || ''
+          Location: location || '',
+          IsOfficial: !!isOfficialGame
         };
 
         await fetch(gasUrl, {

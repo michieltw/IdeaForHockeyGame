@@ -163,6 +163,9 @@ function calculateStandingsAndStats() {
     const awayTeam = row[3];
     const homeScore = parseInt(row[4]) || 0;
     const awayScore = parseInt(row[5]) || 0;
+    const isOfficial = row[10] === true || row[10] === 'true' || row[10] === 'TRUE';
+
+    if (!isOfficial) continue;
 
     if (!standings[homeTeam]) standings[homeTeam] = { GP: 0, W: 0, L: 0, OTL: 0, PTS: 0, ROW: 0, GF: 0, GA: 0 };
     if (!standings[awayTeam]) standings[awayTeam] = { GP: 0, W: 0, L: 0, OTL: 0, PTS: 0, ROW: 0, GF: 0, GA: 0 };
@@ -372,7 +375,7 @@ function doPost(e) {
           const g = data.game;
           gamesSheet.appendRow([
             g.GameID, g.Date, g.HomeTeam, g.AwayTeam,
-            g.HomeScore, g.AwayScore, g.HomeSOG, g.AwaySOG, g.Location, g.EventID || ''
+            g.HomeScore, g.AwayScore, g.HomeSOG, g.AwaySOG, g.Location, g.EventID || '', g.IsOfficial ? 'TRUE' : 'FALSE'
           ].map(sanitizeField));
         }
       }
