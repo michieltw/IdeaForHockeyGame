@@ -221,7 +221,7 @@ export default function GameSummaryModal({
         await fetch(gasUrl, {
           method: 'POST',
           mode: 'no-cors',
-          body: JSON.stringify({ action: 'saveGame', logs, game, token: import.meta.env.VITE_GAS_TOKEN })
+          body: JSON.stringify({ action: 'saveGame', logs, game, newSchema: { games: [{ id: game.id || Date.now().toString(), season_id: "current", home_team_id: game.homeTeam, away_team_id: game.awayTeam, home_score: game.scoreHome, away_score: game.scoreAway, status: "completed" }], game_events: logs.map(l => ({ id: l.id, game_id: game.id || Date.now().toString(), period: l.period, time_elapsed: l.time, trigger_event_type: l.type, trigger_team_id: l.team, description: l.text, x_coordinate: l.x, y_coordinate: l.y })) }, token: import.meta.env.VITE_GAS_TOKEN })
         });
       } catch (err) {
         console.error("Failed to push to database:", err);
