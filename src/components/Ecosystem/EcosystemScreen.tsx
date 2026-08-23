@@ -74,7 +74,7 @@ function useEcosystemData(sheetName: string) {
   return { data, loading, error, saveData, fetchData };
 }
 
-type Tab = 'organizations' | 'leagues' | 'divisions' | 'seasons' | 'clubs' | 'venues' | 'users' | 'persons' | 'personJobs' | 'playerProfiles' | 'playerEquipment';
+type Tab = 'organizations' | 'leagues' | 'divisions' | 'seasons' | 'clubs' | 'venues' | 'users' | 'persons' | 'personJobs' | 'playerProfiles' | 'playerEquipment' | 'teams' | 'rosters';
 
 export default function EcosystemScreen({ onBack }: EcosystemScreenProps) {
   const [activeTab, setActiveTab] = useState<Tab>('organizations');
@@ -90,7 +90,9 @@ export default function EcosystemScreen({ onBack }: EcosystemScreenProps) {
     persons: 'Persons',
     personJobs: 'PersonJobs',
     playerProfiles: 'PlayerProfiles',
-    playerEquipment: 'PlayerEquipment'
+    playerEquipment: 'PlayerEquipment',
+    teams: 'Teams',
+    rosters: 'Rosters'
   };
 
   const { data, loading, error, saveData, fetchData } = useEcosystemData(sheetNameMap[activeTab]);
@@ -214,6 +216,23 @@ export default function EcosystemScreen({ onBack }: EcosystemScreenProps) {
           }`}
         >
           Equipment
+        </button>
+        {/* Phase 3 Tabs */}
+        <button
+          onClick={() => setActiveTab('teams')}
+          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
+            activeTab === 'teams' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
+          }`}
+        >
+          Teams
+        </button>
+        <button
+          onClick={() => setActiveTab('rosters')}
+          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
+            activeTab === 'rosters' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
+          }`}
+        >
+          Rosters
         </button>
       </div>
 
