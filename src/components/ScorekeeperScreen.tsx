@@ -183,6 +183,7 @@ export default function ScorekeeperScreen({ contract, onBack }: { contract: Sett
         onClose={() => setIsGameSummaryOpen(false)}
         gameState={gameState}
         eventId={config.eventId}
+        isOfficialGame={config.settings.officialGame}
         onUpdateEvents={(newEvents) => {
           setGameState(prev => {
             const validIds = new Set(newEvents.map(e => e.id));

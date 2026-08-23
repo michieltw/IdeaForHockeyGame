@@ -19,7 +19,7 @@ export interface Roster {
 export interface User {
   id: string;
   email: string;
-  role: 'Admin' | 'Manager' | 'Player' | 'Fan';
+  role: 'Admin' | 'League Manager' | 'Team Manager' | 'Player' | 'Fan';
   personId?: string;
 }
 
@@ -266,4 +266,5 @@ export interface GameState {
   scoreAway: number;
   events: GameEvent[];
   activePenalties?: ActivePenalty[];
+  isOfficial?: boolean;
 }
