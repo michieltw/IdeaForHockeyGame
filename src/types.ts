@@ -41,6 +41,20 @@ export interface PersonJob {
   role: string; // e.g. Coach, Manager
 }
 
+export interface Award {
+  id: string;
+  name: string;
+  description?: string;
+  icon?: string;
+}
+
+export interface Achievement {
+  id: string;
+  name: string;
+  description?: string;
+  icon?: string;
+}
+
 export interface PlayerProfile {
   id: string;
   personId: string;
@@ -48,6 +62,29 @@ export interface PlayerProfile {
   weight?: string;
   handedness?: 'Left' | 'Right';
   status?: string; // e.g. Active, Free Agent
+  badges?: Achievement[];
+  awards?: Award[];
+}
+
+export interface Retailer {
+  id: string;
+  name: string;
+  logoUrl?: string;
+  website?: string;
+}
+
+export interface Brand {
+  id: string;
+  name: string;
+  logoUrl?: string;
+}
+
+export interface Sponsor {
+  id: string;
+  name: string;
+  logoUrl?: string;
+  website?: string;
+  tier?: 'Gold' | 'Silver' | 'Bronze' | string;
 }
 
 export interface PlayerEquipment {
@@ -56,6 +93,7 @@ export interface PlayerEquipment {
   stickBrand?: string;
   skateBrand?: string;
   helmetBrand?: string;
+  retailer?: string;
 }
 
 export interface Player {

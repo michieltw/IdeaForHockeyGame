@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { ArrowLeft, User as UserIcon, Briefcase, Ruler, Shield, Plus, Edit2, Calendar } from 'lucide-react';
-import { User } from '../types';
+import { ArrowLeft, User as UserIcon, Briefcase, Ruler, Shield, Plus, Edit2, Calendar, Star, Medal } from 'lucide-react';
+import { User, Achievement, Award } from '../types';
 
 interface MyProfileScreenProps {
   currentUser: User | null;
@@ -8,11 +8,21 @@ interface MyProfileScreenProps {
 }
 
 export default function MyProfileScreen({ currentUser, onBack }: MyProfileScreenProps) {
-  const [activeTab, setActiveTab] = useState<'details' | 'jobs' | 'equipment' | 'events'>('details');
+  const [activeTab, setActiveTab] = useState<'details' | 'jobs' | 'equipment' | 'events' | 'achievements'>('details');
   const [rsvps, setRsvps] = useState<Record<string, string>>({
     'evt-1': 'Maybe',
     'evt-2': 'Attending'
   });
+
+  const dummyBadges: Achievement[] = [
+    { id: 'b1', name: '100 Career Goals' },
+    { id: 'b2', name: 'Hat Trick Hero' }
+  ];
+
+  const dummyAwards: Award[] = [
+    { id: 'a1', name: 'MVP 2023' },
+    { id: 'a2', name: 'Best Forward' }
+  ];
 
   const dummyEvents = [
     { id: 'evt-1', title: 'Practice - Blackout HC', date: '2024-11-15 20:00' },
@@ -101,6 +111,15 @@ export default function MyProfileScreen({ currentUser, onBack }: MyProfileScreen
           >
             <Calendar className="w-4 h-4" />
             RSVPs
+          </button>
+          <button
+            onClick={() => setActiveTab('achievements')}
+            className={`flex-1 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex justify-center items-center gap-2 border-b-2 transition-colors ${
+              activeTab === 'achievements' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
+            }`}
+          >
+            <Medal className="w-4 h-4" />
+            Awards
           </button>
         </div>
 
@@ -203,6 +222,39 @@ export default function MyProfileScreen({ currentUser, onBack }: MyProfileScreen
                                 </div>
                             </div>
                         ))}
+                    </div>
+                </div>
+            )}
+
+            {activeTab === 'achievements' && (
+                <div className="flex flex-col gap-6">
+                    <div className="flex flex-col gap-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Medal className="w-5 h-5 text-tertiary" />
+                        <h3 className="text-white font-bold">Awards & Trophies</h3>
+                      </div>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {dummyAwards.map(award => (
+                              <div key={award.id} className="bg-surface-container-low border border-[#2A2A2A] rounded p-4 flex flex-col items-center justify-center gap-2">
+                                  <Medal className="w-8 h-8 text-yellow-400" />
+                                  <span className="text-white font-bold text-center text-sm">{award.name}</span>
+                              </div>
+                          ))}
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Star className="w-5 h-5 text-tertiary" />
+                        <h3 className="text-white font-bold">Badges & Milestones</h3>
+                      </div>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {dummyBadges.map(badge => (
+                              <div key={badge.id} className="bg-surface-container-low border border-[#2A2A2A] rounded p-4 flex flex-col items-center justify-center gap-2">
+                                  <Shield className="w-8 h-8 text-tertiary" />
+                                  <span className="text-white font-bold text-center text-sm">{badge.name}</span>
+                              </div>
+                          ))}
+                      </div>
                     </div>
                 </div>
             )}

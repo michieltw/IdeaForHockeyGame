@@ -1,4 +1,5 @@
-import { ArrowLeft, Shield, Users } from 'lucide-react';
+import { ArrowLeft, Shield, Users, Star } from 'lucide-react';
+import { Sponsor } from '../types';
 
 interface TeamProfileScreenProps {
   onBack: () => void;
@@ -16,6 +17,11 @@ export default function TeamProfileScreen({ onBack }: TeamProfileScreenProps) {
     { id: 1, name: 'John Doe', number: '10', position: 'C' },
     { id: 2, name: 'Mike Smith', number: '27', position: 'D' },
     { id: 3, name: 'Sarah Williams', number: '31', position: 'G' },
+  ];
+
+  const mockSponsors: Sponsor[] = [
+    { id: 's1', name: 'HockeyStore', tier: 'Gold' },
+    { id: 's2', name: 'IceRink Inc.', tier: 'Silver' },
   ];
 
   return (
@@ -45,6 +51,26 @@ export default function TeamProfileScreen({ onBack }: TeamProfileScreenProps) {
             <p className="text-on-surface-variant font-mono text-sm">{mockTeam.club} • {mockTeam.division}</p>
           </div>
         </div>
+
+        {/* Sponsors Section */}
+        {mockSponsors.length > 0 && (
+          <div className="bg-[#050505] border border-[#2A2A2A] rounded-lg p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Star className="w-5 h-5 text-tertiary" />
+              <h3 className="text-white font-bold text-lg">Team Sponsors</h3>
+            </div>
+            <div className="flex flex-wrap gap-4">
+              {mockSponsors.map(sponsor => (
+                <div key={sponsor.id} className="bg-surface-container-low border border-[#2A2A2A] rounded p-4 flex items-center justify-center gap-2 w-32 h-20 shadow">
+                   <div className="flex flex-col items-center">
+                     <span className="text-white font-bold text-sm text-center truncate w-full">{sponsor.name}</span>
+                     <span className="text-[10px] font-mono font-bold text-tertiary uppercase tracking-widest">{sponsor.tier} Partner</span>
+                   </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Active Roster List */}
         <div className="bg-[#050505] border border-[#2A2A2A] rounded-lg p-6">
