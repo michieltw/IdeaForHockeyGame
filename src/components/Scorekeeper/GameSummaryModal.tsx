@@ -65,6 +65,7 @@ interface GameSummaryModalProps {
   linesmen?: string[];
   date?: string;
   time?: string;
+  eventId?: string;
   settings?: GameSettings;
   labels?: GameSummaryModalLabels; // <-- HIER KOMEN ALLE TEKSTEN BINNEN
 }
@@ -88,6 +89,7 @@ export default function GameSummaryModal({
   linesmen,
   date,
   time,
+  eventId,
   settings,
   labels
 }: GameSummaryModalProps) {
@@ -183,6 +185,7 @@ export default function GameSummaryModal({
         const gameId = `${now}_${cleanHome}_${cleanAway}_${Date.now()}`;
         const logs = activeEvents.map(e => ({
           GameID: gameId,
+          EventID: eventId || '',
           Date: date || now,
           HomeTeam: homeTeam,
           AwayTeam: awayTeam,
@@ -201,6 +204,7 @@ export default function GameSummaryModal({
 
         const game = {
           GameID: gameId,
+          EventID: eventId || '',
           Date: date || now,
           HomeTeam: homeTeam,
           AwayTeam: awayTeam,

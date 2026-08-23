@@ -20,6 +20,7 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('splash');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [scheduledGameData, setScheduledGameData] = useState<{
+    id?: string;
     homeTeam: string;
     awayTeam: string;
     homeRoster?: Player[];
