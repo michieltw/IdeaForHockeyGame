@@ -107,6 +107,28 @@ const generateGasCodeSnippet = (token: string) => `function setupSheet() {
     scheduledSheet.appendRow(["GameID", "HomeTeam", "AwayTeam", "Date", "Time", "Location", "Competition", "MatchType"]);
     scheduledSheet.getRange("A1:H1").setFontWeight("bold");
   }
+
+  // Phase 4: Events, RSVPs, Lineups
+  let eventsSheet = ss.getSheetByName("Events");
+  if (!eventsSheet) {
+    eventsSheet = ss.insertSheet("Events");
+    eventsSheet.appendRow(["EventID", "VenueID", "SeasonID", "PhaseID", "EventType", "HomeTeamID", "AwayTeamID", "TournamentMode", "Date", "Time"]);
+    eventsSheet.getRange("A1:J1").setFontWeight("bold");
+  }
+
+  let rsvpsSheet = ss.getSheetByName("RSVPs");
+  if (!rsvpsSheet) {
+    rsvpsSheet = ss.insertSheet("RSVPs");
+    rsvpsSheet.appendRow(["EventID", "PersonID", "Status"]);
+    rsvpsSheet.getRange("A1:C1").setFontWeight("bold");
+  }
+
+  let lineupsSheet = ss.getSheetByName("Lineups");
+  if (!lineupsSheet) {
+    lineupsSheet = ss.insertSheet("Lineups");
+    lineupsSheet.appendRow(["EventID", "PersonID", "TeamID", "UnitType"]);
+    lineupsSheet.getRange("A1:D1").setFontWeight("bold");
+  }
 }
 
 function calculateStandingsAndStats() {

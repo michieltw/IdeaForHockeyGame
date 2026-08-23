@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, User as UserIcon, Briefcase, Ruler, Shield, Plus, Edit2 } from 'lucide-react';
+import { ArrowLeft, User as UserIcon, Briefcase, Ruler, Shield, Plus, Edit2, Calendar } from 'lucide-react';
 import { User } from '../types';
 
 interface MyProfileScreenProps {
@@ -8,7 +8,20 @@ interface MyProfileScreenProps {
 }
 
 export default function MyProfileScreen({ currentUser, onBack }: MyProfileScreenProps) {
-  const [activeTab, setActiveTab] = useState<'details' | 'jobs' | 'equipment'>('details');
+  const [activeTab, setActiveTab] = useState<'details' | 'jobs' | 'equipment' | 'events'>('details');
+  const [rsvps, setRsvps] = useState<Record<string, string>>({
+    'evt-1': 'Maybe',
+    'evt-2': 'Attending'
+  });
+
+  const dummyEvents = [
+    { id: 'evt-1', title: 'Practice - Blackout HC', date: '2024-11-15 20:00' },
+    { id: 'evt-2', title: 'Game vs Spartans', date: '2024-11-18 19:30' }
+  ];
+
+  const handleRsvpChange = (eventId: string, status: string) => {
+    setRsvps(prev => ({ ...prev, [eventId]: status }));
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
@@ -80,6 +93,15 @@ export default function MyProfileScreen({ currentUser, onBack }: MyProfileScreen
             <Shield className="w-4 h-4" />
             Equipment
           </button>
+          <button
+            onClick={() => setActiveTab('events')}
+            className={`flex-1 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex justify-center items-center gap-2 border-b-2 transition-colors ${
+              activeTab === 'events' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
+            }`}
+          >
+            <Calendar className="w-4 h-4" />
+            RSVPs
+          </button>
         </div>
 
         {/* Tab Content Placeholder */}
@@ -150,6 +172,37 @@ export default function MyProfileScreen({ currentUser, onBack }: MyProfileScreen
                             <span className="text-[10px] uppercase font-mono tracking-widest text-gray-500">Helmet Brand</span>
                             <span className="text-white font-bold">Warrior</span>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {activeTab === 'events' && (
+                <div className="flex flex-col gap-4">
+                    <h3 className="text-white font-bold mb-2">Upcoming Events & RSVPs</h3>
+                    <div className="flex flex-col gap-4">
+                        {dummyEvents.map(event => (
+                            <div key={event.id} className="bg-surface-container-low border border-[#2A2A2A] rounded p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                <div>
+                                    <h4 className="text-white font-bold">{event.title}</h4>
+                                    <p className="text-sm text-on-surface-variant font-mono">{event.date}</p>
+                                </div>
+                                <div className="flex gap-2 w-full md:w-auto">
+                                    {['Attending', 'Not Attending', 'Maybe'].map(status => (
+                                        <button
+                                            key={status}
+                                            onClick={() => handleRsvpChange(event.id, status)}
+                                            className={`flex-1 md:flex-none px-3 py-1 text-xs font-mono font-bold uppercase tracking-widest rounded border transition-colors ${
+                                                rsvps[event.id] === status
+                                                    ? 'bg-tertiary text-black border-tertiary'
+                                                    : 'bg-transparent text-on-surface-variant border-[#2A2A2A] hover:border-tertiary/50 hover:text-white'
+                                            }`}
+                                        >
+                                            {status}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             )}
