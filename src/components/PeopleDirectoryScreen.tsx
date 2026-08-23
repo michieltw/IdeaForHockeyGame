@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { ArrowLeft, Users, Search, Filter } from 'lucide-react';
 
 interface PeopleDirectoryScreenProps {
+  onViewPerson?: (person: any) => void;
   onBack: () => void;
 }
 
-export default function PeopleDirectoryScreen({ onBack }: PeopleDirectoryScreenProps) {
+export default function PeopleDirectoryScreen({ onBack, onViewPerson }: PeopleDirectoryScreenProps) {
   const [filterJob, setFilterJob] = useState('All');
   const [filterRole, setFilterRole] = useState('All');
 
@@ -82,7 +83,7 @@ export default function PeopleDirectoryScreen({ onBack }: PeopleDirectoryScreenP
         {/* Directory List */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredPeople.map(person => (
-                <div key={person.id} className="bg-[#050505] border border-[#2A2A2A] rounded-lg p-4 flex items-center gap-4 hover:border-tertiary/50 transition-colors cursor-pointer group">
+                <div key={person.id} onClick={() => onViewPerson && onViewPerson(person)} className="bg-[#050505] border border-[#2A2A2A] rounded-lg p-4 flex items-center gap-4 hover:border-tertiary/50 transition-colors cursor-pointer group">
                     <div className="w-12 h-12 rounded-full bg-surface-container-high border border-[#2A2A2A] flex items-center justify-center text-on-surface-variant group-hover:text-tertiary transition-colors">
                         <Users className="w-6 h-6" />
                     </div>
