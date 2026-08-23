@@ -35,6 +35,28 @@ app.post('/api/login', (req, res) => {
                 personId: 'person-admin-001'
             }
         });
+    } else if (email === 'league@blackouthockey.com' && password === 'league') {
+        res.json({
+            success: true,
+            token: 'dummy-jwt-token',
+            user: {
+                id: 'league-001',
+                email: email,
+                role: 'League Manager',
+                personId: 'person-league-001'
+            }
+        });
+    } else if (email === 'team@blackouthockey.com' && password === 'team') {
+        res.json({
+            success: true,
+            token: 'dummy-jwt-token',
+            user: {
+                id: 'team-001',
+                email: email,
+                role: 'Team Manager',
+                personId: 'person-team-001'
+            }
+        });
     } else {
         res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
