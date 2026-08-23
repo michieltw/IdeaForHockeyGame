@@ -169,6 +169,11 @@ export default function RinkMap({
             {/* Center Ice Dot */}
             <div className="absolute top-1/2 left-1/2 w-2.5 h-2.5 bg-blue-600 rounded-full -translate-x-1/2 -translate-y-1/2 z-10"></div>
 
+            {/* Mock Sponsor Logo at Center Ice */}
+            <div className="absolute top-1/2 left-1/2 w-20 h-20 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2 z-0 flex items-center justify-center opacity-50 border border-white/20 pointer-events-none">
+              <span className="text-[10px] font-bold text-white uppercase tracking-widest rotate-[-45deg]">Sponsor</span>
+            </div>
+
             {/* End Zone Dots */}
             <div className="absolute top-[25%] left-[20%] w-2.5 h-2.5 bg-red-600 rounded-full -translate-x-1/2 -translate-y-1/2 z-10"></div>
             <div className="absolute top-[75%] left-[20%] w-2.5 h-2.5 bg-red-600 rounded-full -translate-x-1/2 -translate-y-1/2 z-10"></div>
