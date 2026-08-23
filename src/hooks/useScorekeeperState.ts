@@ -240,6 +240,7 @@ export function useScorekeeperState({ contract, onBack }: { contract: SettingsCo
     const realTeam = team === 'home' ? config.homeTeam : config.awayTeam;
     const newEvent: GameEvent = {
       id: Date.now().toString(),
+      eventId: config.eventId,
       type: 'shot',
       team: realTeam,
       time: timeString,
@@ -261,6 +262,7 @@ export function useScorekeeperState({ contract, onBack }: { contract: SettingsCo
     const realTeam = team === 'home' ? config.homeTeam : config.awayTeam;
     const newEvent: GameEvent = {
       id: Date.now().toString(),
+      eventId: config.eventId,
       type: 'faceoff',
       team: realTeam,
       time: timeString,
@@ -296,6 +298,7 @@ export function useScorekeeperState({ contract, onBack }: { contract: SettingsCo
     }
     const newEvent: GameEvent = {
       id: Date.now().toString(),
+      eventId: config.eventId,
       type: 'icing',
       team: config.homeTeam,
       time: timeString,
@@ -315,6 +318,7 @@ export function useScorekeeperState({ contract, onBack }: { contract: SettingsCo
     }
     const newEvent: GameEvent = {
       id: Date.now().toString(),
+      eventId: config.eventId,
       type: 'offside',
       team: config.homeTeam,
       time: timeString,
@@ -337,6 +341,7 @@ export function useScorekeeperState({ contract, onBack }: { contract: SettingsCo
 
     const newEvent: GameEvent = {
       id: Date.now().toString(),
+      eventId: config.eventId,
       type: 'goal',
       team: realTeam,
       time: timeString,
@@ -376,6 +381,7 @@ export function useScorekeeperState({ contract, onBack }: { contract: SettingsCo
 
     const newEvent: GameEvent = {
       id: eventId,
+      eventId: config.eventId,
       type: 'penalty',
       team: realTeam,
       time: timeString,

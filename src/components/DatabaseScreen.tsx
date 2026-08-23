@@ -72,16 +72,16 @@ const generateGasCodeSnippet = (token: string) => `function setupSheet() {
   let logsSheet = ss.getSheetByName("ActionLogs");
   if (!logsSheet) {
     logsSheet = ss.insertSheet("ActionLogs");
-    logsSheet.appendRow(["GameID", "Date", "HomeTeam", "AwayTeam", "Timestamp", "EventType", "Team", "Description", "X", "Y", "Player", "Assist1", "Assist2", "PenaltyReason", "PenaltyMinutes"]);
-    logsSheet.getRange("A1:O1").setFontWeight("bold");
+    logsSheet.appendRow(["GameID", "Date", "HomeTeam", "AwayTeam", "Timestamp", "EventType", "Team", "Description", "X", "Y", "Player", "Assist1", "Assist2", "PenaltyReason", "PenaltyMinutes", "EventID"]);
+    logsSheet.getRange("A1:P1").setFontWeight("bold");
   }
 
   // Games Tab
   let gamesSheet = ss.getSheetByName("Games");
   if (!gamesSheet) {
     gamesSheet = ss.insertSheet("Games");
-    gamesSheet.appendRow(["GameID", "Date", "HomeTeam", "AwayTeam", "HomeScore", "AwayScore", "HomeSOG", "AwaySOG", "Location"]);
-    gamesSheet.getRange("A1:I1").setFontWeight("bold");
+    gamesSheet.appendRow(["GameID", "Date", "HomeTeam", "AwayTeam", "HomeScore", "AwayScore", "HomeSOG", "AwaySOG", "Location", "EventID"]);
+    gamesSheet.getRange("A1:J1").setFontWeight("bold");
   }
 
   // Standings Tab
@@ -351,7 +351,7 @@ function doPost(e) {
           logsSheet.appendRow([
             log.GameID, log.Date, log.HomeTeam, log.AwayTeam,
             log.Timestamp, log.EventType, log.Team, log.Description,
-            log.X, log.Y, log.Player, log.Assist1, log.Assist2, log.PenaltyReason, log.PenaltyMinutes
+            log.X, log.Y, log.Player, log.Assist1, log.Assist2, log.PenaltyReason, log.PenaltyMinutes, log.EventID || ''
           ].map(sanitizeField));
         });
       }
@@ -362,7 +362,7 @@ function doPost(e) {
           const g = data.game;
           gamesSheet.appendRow([
             g.GameID, g.Date, g.HomeTeam, g.AwayTeam,
-            g.HomeScore, g.AwayScore, g.HomeSOG, g.AwaySOG, g.Location
+            g.HomeScore, g.AwayScore, g.HomeSOG, g.AwaySOG, g.Location, g.EventID || ''
           ].map(sanitizeField));
         }
       }

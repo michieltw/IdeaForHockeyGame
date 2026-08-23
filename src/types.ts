@@ -150,6 +150,7 @@ export interface GameSettings {
 }
 
 export interface GameConfig {
+  eventId?: string;
   homeTeam: string;
   awayTeam: string;
   homeColor?: string;
@@ -177,6 +178,7 @@ export type EventType = 'shot' | 'goal' | 'penalty' | 'faceoff' | 'icing' | 'off
 
 export interface GameEvent {
   id: string;
+  eventId?: string;
   type: EventType;
   team: string;
   time: string;
