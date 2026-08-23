@@ -177,7 +177,7 @@ export default function MyProfileScreen({ currentUser, onBack }: MyProfileScreen
 
             {activeTab === 'equipment' && (
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-white font-bold mb-2">Preferred Equipment</h3>
+                    <h3 className="text-white font-bold mb-2">Preferred Equipment & Partners</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="bg-surface-container-low border border-[#2A2A2A] rounded p-4 flex flex-col gap-1">
                             <span className="text-[10px] uppercase font-mono tracking-widest text-gray-500">Stick Brand</span>
@@ -190,6 +190,10 @@ export default function MyProfileScreen({ currentUser, onBack }: MyProfileScreen
                         <div className="bg-surface-container-low border border-[#2A2A2A] rounded p-4 flex flex-col gap-1">
                             <span className="text-[10px] uppercase font-mono tracking-widest text-gray-500">Helmet Brand</span>
                             <span className="text-white font-bold">Warrior</span>
+                        </div>
+                        <div className="bg-surface-container-low border border-[#2A2A2A] rounded p-4 flex flex-col gap-1 border-t-tertiary">
+                            <span className="text-[10px] uppercase font-mono tracking-widest text-tertiary">Preferred Retailer</span>
+                            <span className="text-white font-bold">HockeyStore</span>
                         </div>
                     </div>
                 </div>
