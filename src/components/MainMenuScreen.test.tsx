@@ -9,6 +9,9 @@ describe('MainMenuScreen', () => {
     onLogout: vi.fn(),
     onDatabase: vi.fn(),
     onStats: vi.fn(),
+    onCalendar: vi.fn(),
+    onLineupBuilder: vi.fn(),
+    onDraftMode: vi.fn(),
   };
 
   beforeEach(() => {
@@ -82,7 +85,7 @@ describe('MainMenuScreen', () => {
 
   it('calls onLogout when user icon is clicked', () => {
     render(<MainMenuScreen {...mockProps} />);
-    const logoutButton = screen.getByRole('button', { name: 'Logout / Switch User' });
+    const logoutButton = screen.getByRole('button', { name: 'Logout' });
     fireEvent.click(logoutButton);
     expect(mockProps.onLogout).toHaveBeenCalledTimes(1);
   });

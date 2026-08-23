@@ -102,9 +102,15 @@ export default function ScoreHeader({
     p => p.team === awayTeam
   );
 
+  // Mock sponsors for Phase 7 Gamification
+  const mockSponsor = { name: "Bauer", tier: "Gold" };
+
   return (
     <header className="flex flex-col glossy-dark pt-4 pb-2 px-2 shrink-0 z-10 relative shadow-xl">
-      <button onClick={onBack} className="absolute top-2 left-2 text-gray-400 hover:text-white z-20">
+      <div className="absolute top-0 left-0 right-0 h-4 bg-tertiary/20 flex items-center justify-center z-0">
+         <span className="text-[8px] font-mono font-bold text-tertiary uppercase tracking-widest">Sponsored by {mockSponsor.name}</span>
+      </div>
+      <button onClick={onBack} className="absolute top-4 left-2 text-gray-400 hover:text-white z-20">
         <ArrowLeft className="w-6 h-6" />
       </button>
       <div className="flex justify-between items-center relative z-10 pt-4 px-2">

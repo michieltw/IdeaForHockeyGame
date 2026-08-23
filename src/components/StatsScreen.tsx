@@ -6,8 +6,10 @@ interface StatsScreenProps {
   onBack: () => void;
 }
 
+import { Shield } from 'lucide-react';
+
 export default function StatsScreen({ onBack }: StatsScreenProps) {
-  const [activeTab, setActiveTab] = useState<'standings' | 'stats'>('standings');
+  const [activeTab, setActiveTab] = useState<'standings' | 'stats' | 'goalies'>('standings');
   const [standings, setStandings] = useState<any[]>([]);
   const [stats, setStats] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -84,6 +86,15 @@ export default function StatsScreen({ onBack }: StatsScreenProps) {
             <Users className="w-4 h-4" />
             Speler Stats
           </button>
+          <button
+            onClick={() => setActiveTab('goalies')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md font-mono text-xs font-bold uppercase tracking-widest transition-colors ${
+              activeTab === 'goalies' ? 'bg-tertiary text-black' : 'text-gray-500 hover:text-white'
+            }`}
+          >
+            <Shield className="w-4 h-4" />
+            Goalie Stats
+          </button>
         </div>
 
         {/* Content */}
@@ -154,6 +165,10 @@ export default function StatsScreen({ onBack }: StatsScreenProps) {
 
             {activeTab === 'stats' && stats.length <= 1 && (
               <div className="p-8 text-center text-gray-500 font-mono text-sm">Geen speler stats gevonden.</div>
+            )}
+
+            {activeTab === 'goalies' && (
+              <div className="p-8 text-center text-gray-500 font-mono text-sm">Geen goalie stats gevonden (Phase 6 placeholder).</div>
             )}
           </div>
         )}

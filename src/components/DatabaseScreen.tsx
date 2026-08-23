@@ -9,6 +9,49 @@ interface DatabaseScreenProps {
 const generateGasCodeSnippet = (token: string) => `function setupSheet() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
+  // Phase 1 Ecosystem Tabs
+  let orgSheet = ss.getSheetByName("Organizations");
+  if (!orgSheet) {
+    orgSheet = ss.insertSheet("Organizations");
+    orgSheet.appendRow(["OrgID", "Name", "Contact"]);
+    orgSheet.getRange("A1:C1").setFontWeight("bold");
+  }
+
+  let leaguesSheet = ss.getSheetByName("Leagues");
+  if (!leaguesSheet) {
+    leaguesSheet = ss.insertSheet("Leagues");
+    leaguesSheet.appendRow(["LeagueID", "OrgID", "Name", "Level"]);
+    leaguesSheet.getRange("A1:D1").setFontWeight("bold");
+  }
+
+  let divisionsSheet = ss.getSheetByName("Divisions");
+  if (!divisionsSheet) {
+    divisionsSheet = ss.insertSheet("Divisions");
+    divisionsSheet.appendRow(["DivisionID", "LeagueID", "Name"]);
+    divisionsSheet.getRange("A1:C1").setFontWeight("bold");
+  }
+
+  let seasonsSheet = ss.getSheetByName("Seasons");
+  if (!seasonsSheet) {
+    seasonsSheet = ss.insertSheet("Seasons");
+    seasonsSheet.appendRow(["SeasonID", "Name", "StartDate", "EndDate"]);
+    seasonsSheet.getRange("A1:D1").setFontWeight("bold");
+  }
+
+  let clubsSheet = ss.getSheetByName("Clubs");
+  if (!clubsSheet) {
+    clubsSheet = ss.insertSheet("Clubs");
+    clubsSheet.appendRow(["ClubID", "Name", "Founded"]);
+    clubsSheet.getRange("A1:C1").setFontWeight("bold");
+  }
+
+  let venuesSheet = ss.getSheetByName("Venues");
+  if (!venuesSheet) {
+    venuesSheet = ss.insertSheet("Venues");
+    venuesSheet.appendRow(["VenueID", "Name", "Address", "Capacity"]);
+    venuesSheet.getRange("A1:D1").setFontWeight("bold");
+  }
+
   // Settings Tab
   let settingsSheet = ss.getSheetByName("Settings");
   if (!settingsSheet) {
@@ -29,24 +72,24 @@ const generateGasCodeSnippet = (token: string) => `function setupSheet() {
   let logsSheet = ss.getSheetByName("ActionLogs");
   if (!logsSheet) {
     logsSheet = ss.insertSheet("ActionLogs");
-    logsSheet.appendRow(["GameID", "Date", "HomeTeam", "AwayTeam", "Timestamp", "EventType", "Team", "Description", "X", "Y", "Player", "Assist1", "Assist2", "PenaltyReason", "PenaltyMinutes"]);
-    logsSheet.getRange("A1:O1").setFontWeight("bold");
+    logsSheet.appendRow(["GameID", "Date", "HomeTeam", "AwayTeam", "Timestamp", "EventType", "Team", "Description", "X", "Y", "Player", "Assist1", "Assist2", "PenaltyReason", "PenaltyMinutes", "EventID"]);
+    logsSheet.getRange("A1:P1").setFontWeight("bold");
   }
 
   // Games Tab
   let gamesSheet = ss.getSheetByName("Games");
   if (!gamesSheet) {
     gamesSheet = ss.insertSheet("Games");
-    gamesSheet.appendRow(["GameID", "Date", "HomeTeam", "AwayTeam", "HomeScore", "AwayScore", "HomeSOG", "AwaySOG", "Location"]);
-    gamesSheet.getRange("A1:I1").setFontWeight("bold");
+    gamesSheet.appendRow(["GameID", "Date", "HomeTeam", "AwayTeam", "HomeScore", "AwayScore", "HomeSOG", "AwaySOG", "Location", "EventID"]);
+    gamesSheet.getRange("A1:J1").setFontWeight("bold");
   }
 
   // Standings Tab
   let standingsSheet = ss.getSheetByName("Standings");
   if (!standingsSheet) {
     standingsSheet = ss.insertSheet("Standings");
-    standingsSheet.appendRow(["Team", "GP", "W", "L", "OTL", "PTS", "GF", "GA", "DIFF"]);
-    standingsSheet.getRange("A1:I1").setFontWeight("bold");
+    standingsSheet.appendRow(["Team", "GP", "W", "L", "OTL", "PTS", "ROW", "GF", "GA", "DIFF"]);
+    standingsSheet.getRange("A1:J1").setFontWeight("bold");
   }
 
   // PlayerStats Tab
@@ -63,6 +106,36 @@ const generateGasCodeSnippet = (token: string) => `function setupSheet() {
     scheduledSheet = ss.insertSheet("ScheduledGames");
     scheduledSheet.appendRow(["GameID", "HomeTeam", "AwayTeam", "Date", "Time", "Location", "Competition", "MatchType"]);
     scheduledSheet.getRange("A1:H1").setFontWeight("bold");
+  }
+
+  // Phase 4: Events, RSVPs, Lineups
+  let eventsSheet = ss.getSheetByName("Events");
+  if (!eventsSheet) {
+    eventsSheet = ss.insertSheet("Events");
+    eventsSheet.appendRow(["EventID", "VenueID", "SeasonID", "PhaseID", "EventType", "HomeTeamID", "AwayTeamID", "TournamentMode", "Date", "Time"]);
+    eventsSheet.getRange("A1:J1").setFontWeight("bold");
+  }
+
+  let rsvpsSheet = ss.getSheetByName("RSVPs");
+  if (!rsvpsSheet) {
+    rsvpsSheet = ss.insertSheet("RSVPs");
+    rsvpsSheet.appendRow(["EventID", "PersonID", "Status"]);
+    rsvpsSheet.getRange("A1:C1").setFontWeight("bold");
+  }
+
+  let lineupsSheet = ss.getSheetByName("Lineups");
+  if (!lineupsSheet) {
+    lineupsSheet = ss.insertSheet("Lineups");
+    lineupsSheet.appendRow(["EventID", "PersonID", "TeamID", "UnitType"]);
+    lineupsSheet.getRange("A1:D1").setFontWeight("bold");
+  }
+
+  // Phase 6: Drafts
+  let draftsSheet = ss.getSheetByName("DraftPicks");
+  if (!draftsSheet) {
+    draftsSheet = ss.insertSheet("DraftPicks");
+    draftsSheet.appendRow(["TeamID", "OriginalTeamID", "Year", "Round", "PickNumber", "PersonID"]);
+    draftsSheet.getRange("A1:F1").setFontWeight("bold");
   }
 }
 
@@ -91,8 +164,8 @@ function calculateStandingsAndStats() {
     const homeScore = parseInt(row[4]) || 0;
     const awayScore = parseInt(row[5]) || 0;
 
-    if (!standings[homeTeam]) standings[homeTeam] = { GP: 0, W: 0, L: 0, OTL: 0, PTS: 0, GF: 0, GA: 0 };
-    if (!standings[awayTeam]) standings[awayTeam] = { GP: 0, W: 0, L: 0, OTL: 0, PTS: 0, GF: 0, GA: 0 };
+    if (!standings[homeTeam]) standings[homeTeam] = { GP: 0, W: 0, L: 0, OTL: 0, PTS: 0, ROW: 0, GF: 0, GA: 0 };
+    if (!standings[awayTeam]) standings[awayTeam] = { GP: 0, W: 0, L: 0, OTL: 0, PTS: 0, ROW: 0, GF: 0, GA: 0 };
 
     standings[homeTeam].GP++;
     standings[awayTeam].GP++;
@@ -105,10 +178,12 @@ function calculateStandingsAndStats() {
     if (homeScore > awayScore) {
       standings[homeTeam].W++;
       standings[homeTeam].PTS += 2;
+      standings[homeTeam].ROW++;
       standings[awayTeam].L++; // Simplification: OTL requires knowing if game went to OT
     } else if (awayScore > homeScore) {
       standings[awayTeam].W++;
       standings[awayTeam].PTS += 2;
+      standings[awayTeam].ROW++;
       standings[homeTeam].L++;
     } else {
       // Tie
@@ -120,15 +195,15 @@ function calculateStandingsAndStats() {
   }
 
   // Clear and write standings
-  standingsSheet.getRange(2, 1, standingsSheet.getLastRow() || 2, 9).clearContent();
+  standingsSheet.getRange(2, 1, standingsSheet.getLastRow() || 2, 10).clearContent();
   const standingsArray = Object.keys(standings).map(team => {
     const s = standings[team];
-    return [team, s.GP, s.W, s.L, s.OTL, s.PTS, s.GF, s.GA, s.GF - s.GA];
+    return [team, s.GP, s.W, s.L, s.OTL, s.PTS, s.ROW, s.GF, s.GA, s.GF - s.GA];
   });
-  // Sort by PTS descending
-  standingsArray.sort((a, b) => b[5] - a[5]);
+  // Sort by PTS descending, then ROW, then DIFF
+  standingsArray.sort((a, b) => b[5] - a[5] || b[6] - a[6] || b[9] - a[9]);
   if (standingsArray.length > 0) {
-    standingsSheet.getRange(2, 1, standingsArray.length, 9).setValues(standingsArray);
+    standingsSheet.getRange(2, 1, standingsArray.length, 10).setValues(standingsArray);
   }
 
   // Calculate Player Stats
@@ -258,6 +333,25 @@ function doPost(e) {
       return value;
     };
 
+    if (data.action === 'saveEcosystemData') {
+      const { sheetName, rowData } = data;
+      const sheet = ss.getSheetByName(sheetName);
+      if (!sheet) throw new Error("Sheet niet gevonden: " + sheetName);
+
+      if (Array.isArray(rowData)) {
+        sheet.appendRow(rowData.map(sanitizeField));
+      }
+      return ContentService.createTextOutput(JSON.stringify({status: "Success"})).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (data.action === 'getEcosystemData') {
+      const { sheetName } = data;
+      const sheet = ss.getSheetByName(sheetName);
+      if (!sheet) throw new Error("Sheet niet gevonden: " + sheetName);
+      const values = sheet.getDataRange().getValues();
+      return ContentService.createTextOutput(JSON.stringify({status: "Success", data: values})).setMimeType(ContentService.MimeType.JSON);
+    }
+
     if (data.action === 'saveGame' || data.logs) {
       const logsSheet = ss.getSheetByName("ActionLogs");
       if (!logsSheet) throw new Error("ActionLogs sheet niet gevonden");
@@ -267,7 +361,7 @@ function doPost(e) {
           logsSheet.appendRow([
             log.GameID, log.Date, log.HomeTeam, log.AwayTeam,
             log.Timestamp, log.EventType, log.Team, log.Description,
-            log.X, log.Y, log.Player, log.Assist1, log.Assist2, log.PenaltyReason, log.PenaltyMinutes
+            log.X, log.Y, log.Player, log.Assist1, log.Assist2, log.PenaltyReason, log.PenaltyMinutes, log.EventID || ''
           ].map(sanitizeField));
         });
       }
@@ -278,7 +372,7 @@ function doPost(e) {
           const g = data.game;
           gamesSheet.appendRow([
             g.GameID, g.Date, g.HomeTeam, g.AwayTeam,
-            g.HomeScore, g.AwayScore, g.HomeSOG, g.AwaySOG, g.Location
+            g.HomeScore, g.AwayScore, g.HomeSOG, g.AwaySOG, g.Location, g.EventID || ''
           ].map(sanitizeField));
         }
       }

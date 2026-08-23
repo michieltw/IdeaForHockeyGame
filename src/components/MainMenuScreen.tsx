@@ -1,17 +1,28 @@
 import { getGasUrl } from '../utils/gasUrl';
 import { useState, useRef, useEffect } from 'react';
-import { Play, Download, Upload, LogOut, User, Database as DatabaseIcon, CheckCircle, XCircle, Trophy } from 'lucide-react';
+import { Play, Download, Upload, LogOut, User as UserIcon, Database as DatabaseIcon, CheckCircle, XCircle, Trophy, Globe, Users, Shield, Wrench, RefreshCcw, Calendar } from 'lucide-react';
 import { defaultSettingsContract } from '../settingsContract';
+import { User } from '../types';
 
 interface MainMenuScreenProps {
+  currentUser?: User | null;
   onNewGame: () => void;
   onStartScheduledGame: (game: any) => void;
   onLogout: () => void;
   onDatabase: () => void;
   onStats: () => void;
+  onEcosystem?: () => void;
+  onMyProfile?: () => void;
+  onPeopleDirectory?: () => void;
+  onTeamProfile?: () => void;
+  onRosterBuilder?: () => void;
+  onFreeAgency?: () => void;
+  onCalendar: () => void;
+  onLineupBuilder: () => void;
+  onDraftMode: () => void;
 }
 
-export default function MainMenuScreen({ onNewGame, onStartScheduledGame, onLogout, onDatabase, onStats }: MainMenuScreenProps) {
+export default function MainMenuScreen({ currentUser, onNewGame, onStartScheduledGame, onLogout, onDatabase, onStats, onEcosystem, onMyProfile, onPeopleDirectory, onTeamProfile, onRosterBuilder, onFreeAgency, onCalendar, onLineupBuilder, onDraftMode }: MainMenuScreenProps) {
   const [scheduledGames, setScheduledGames] = useState<any[]>([]);
 
   useEffect(() => {
@@ -263,14 +274,23 @@ export default function MainMenuScreen({ onNewGame, onStartScheduledGame, onLogo
       {/* Top Right User Icon */}
       <div className="absolute top-4 right-4 z-20">
         <button
-          onClick={onLogout}
+          onClick={onMyProfile}
           className="w-10 h-10 rounded-full bg-surface-container-low border border-[#2A2A2A] hover:border-tertiary/60 hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-tertiary transition-all shadow-md active:scale-95 group relative"
-          title="Logout / Switch User"
+          title="My Profile"
         >
-          <User className="w-5 h-5 text-tertiary" />
-          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-surface-container-highest border border-outline-variant rounded-full flex items-center justify-center text-error">
-            <LogOut className="w-2.5 h-2.5" />
-          </div>
+          <UserIcon className="w-5 h-5 text-tertiary" />
+          {currentUser && (
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-tertiary rounded-full flex items-center justify-center">
+              <span className="text-[8px] font-bold text-black">{currentUser.role[0]}</span>
+            </div>
+          )}
+        </button>
+        <button
+          onClick={onLogout}
+          className="w-10 h-10 mt-2 rounded-full bg-surface-container-low border border-[#2A2A2A] hover:border-error/60 hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-error transition-all shadow-md active:scale-95 group relative"
+          title="Logout"
+        >
+          <LogOut className="w-4 h-4" />
         </button>
       </div>
 
@@ -328,7 +348,7 @@ export default function MainMenuScreen({ onNewGame, onStartScheduledGame, onLogo
           <div className="flex gap-3 w-full">
             <button
               onClick={onDatabase}
-              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[14px] font-bold tracking-widest py-3.5 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1.5 uppercase shadow-md inner-glow relative"
+              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[12px] font-bold tracking-widest py-3.5 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1.5 uppercase shadow-md inner-glow relative"
             >
               <DatabaseIcon className="w-5 h-5" />
               DATABASE
@@ -341,10 +361,76 @@ export default function MainMenuScreen({ onNewGame, onStartScheduledGame, onLogo
             </button>
             <button
               onClick={onStats}
-              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[14px] font-bold tracking-widest py-3.5 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1.5 uppercase shadow-md inner-glow"
+              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[12px] font-bold tracking-widest py-3.5 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1.5 uppercase shadow-md inner-glow"
             >
               <Trophy className="w-5 h-5 text-tertiary" />
               STATS
+            </button>
+            <button
+              onClick={onEcosystem}
+              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[12px] font-bold tracking-widest py-3.5 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1.5 uppercase shadow-md inner-glow"
+            >
+              <Globe className="w-5 h-5 text-tertiary" />
+              ECOSYSTEM
+            </button>
+          </div>
+
+          <div className="flex gap-3 w-full mt-1">
+            <button
+              onClick={onPeopleDirectory}
+              className="w-full bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[12px] font-bold tracking-widest py-3.5 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1.5 uppercase shadow-md inner-glow"
+            >
+              <Users className="w-5 h-5 text-tertiary" />
+              PEOPLE DIRECTORY
+            </button>
+          </div>
+
+          {/* Phase 3, 4, 6 Features */}
+          <div className="flex gap-3 w-full mt-1">
+            <button
+              onClick={onTeamProfile}
+              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
+            >
+              <Shield className="w-4 h-4 text-tertiary" />
+              Teams
+            </button>
+            <button
+              onClick={onRosterBuilder}
+              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
+            >
+              <Wrench className="w-4 h-4 text-tertiary" />
+              Rosters
+            </button>
+            <button
+              onClick={onFreeAgency}
+              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
+            >
+              <RefreshCcw className="w-4 h-4 text-tertiary" />
+              Free Agency
+            </button>
+          </div>
+
+          <div className="flex gap-3 w-full mt-1">
+            <button
+              onClick={onCalendar}
+              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
+            >
+              <Calendar className="w-4 h-4 text-tertiary" />
+              Calendar
+            </button>
+            <button
+              onClick={onLineupBuilder}
+              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
+            >
+              <Users className="w-4 h-4 text-tertiary" />
+              Lineups
+            </button>
+            <button
+              onClick={onDraftMode}
+              className="flex-1 bg-[#050505] border border-[#2A2A2A] text-on-surface-variant font-mono text-[11px] font-bold tracking-widest py-3 rounded-lg hover:text-white hover:border-outline-variant active:scale-95 transition-all flex flex-col items-center justify-center gap-1 uppercase shadow-md inner-glow"
+            >
+              <Trophy className="w-4 h-4 text-tertiary" />
+              Draft
             </button>
           </div>
 

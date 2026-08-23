@@ -1,4 +1,100 @@
-export type Screen = 'splash' | 'main-menu' | 'settings' | 'scorekeeper' | 'database' | 'stats';
+export type Screen = 'splash' | 'main-menu' | 'settings' | 'scorekeeper' | 'database' | 'stats' | 'ecosystem' | 'my-profile' | 'people-directory' | 'team-profile' | 'roster-builder' | 'free-agency' | 'calendar' | 'lineup-builder' | 'draft-mode';
+
+export interface Team {
+  id: string;
+  clubId: string;
+  divisionId: string;
+  seasonId: string;
+  parentTeamId?: string;
+  name?: string;
+}
+
+export interface Roster {
+  id: string;
+  personId: string;
+  teamId: string;
+  seasonId: string;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  role: 'Admin' | 'Manager' | 'Player' | 'Fan';
+  personId?: string;
+}
+
+export interface Person {
+  id: string;
+  userId?: string;
+  firstName: string;
+  lastName: string;
+  birthdate?: string;
+  email?: string;
+  phone?: string;
+}
+
+export interface PersonJob {
+  id: string;
+  personId: string;
+  clubId: string;
+  title: string;
+  role: string; // e.g. Coach, Manager
+}
+
+export interface Award {
+  id: string;
+  name: string;
+  description?: string;
+  icon?: string;
+}
+
+export interface Achievement {
+  id: string;
+  name: string;
+  description?: string;
+  icon?: string;
+}
+
+export interface PlayerProfile {
+  id: string;
+  personId: string;
+  height?: string;
+  weight?: string;
+  handedness?: 'Left' | 'Right';
+  status?: string; // e.g. Active, Free Agent
+  badges?: Achievement[];
+  awards?: Award[];
+}
+
+export interface Retailer {
+  id: string;
+  name: string;
+  logoUrl?: string;
+  website?: string;
+}
+
+export interface Brand {
+  id: string;
+  name: string;
+  logoUrl?: string;
+}
+
+export interface Sponsor {
+  id: string;
+  name: string;
+  logoUrl?: string;
+  website?: string;
+  tier?: 'Gold' | 'Silver' | 'Bronze' | string;
+}
+
+export interface PlayerEquipment {
+  id: string;
+  personId: string;
+  stickBrand?: string;
+  skateBrand?: string;
+  helmetBrand?: string;
+  retailer?: string;
+}
 
 export interface Player {
   id: string;
@@ -18,6 +114,41 @@ export interface ScheduledGame {
   matchType?: string;
   homeRoster?: Player[];
   awayRoster?: Player[];
+}
+
+export interface EcosystemEvent {
+  id: string;
+  venueId?: string;
+  seasonId?: string;
+  phaseId?: string;
+  eventType: 'Game' | 'Practice' | 'Event';
+  homeTeamId?: string;
+  awayTeamId?: string;
+  tournamentMode?: boolean;
+  date: string;
+  time: string;
+}
+
+export interface RSVP {
+  eventId: string;
+  personId: string;
+  status: 'Attending' | 'Not Attending' | 'Maybe';
+}
+
+export interface Lineup {
+  eventId: string;
+  personId: string;
+  teamId: string;
+  unitType: 'Even Strength' | 'PK1' | 'PK2' | 'PP1' | 'PP2' | 'Starting Goalie' | 'Backup Goalie' | string;
+}
+
+export interface DraftPick {
+  teamId: string;
+  originalTeamId?: string;
+  year: number;
+  round: number;
+  pickNumber: number;
+  personId: string;
 }
 
 export interface GameSettings {
@@ -66,6 +197,7 @@ export interface GameSettings {
 }
 
 export interface GameConfig {
+  eventId?: string;
   homeTeam: string;
   awayTeam: string;
   homeColor?: string;
@@ -93,6 +225,7 @@ export type EventType = 'shot' | 'goal' | 'penalty' | 'faceoff' | 'icing' | 'off
 
 export interface GameEvent {
   id: string;
+  eventId?: string;
   type: EventType;
   team: string;
   time: string;
