@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu, X, User as UserIcon, LogOut, Home, Play, Database, Trophy, Globe, Users, Shield, Wrench, RefreshCcw, Calendar, LayoutTemplate } from 'lucide-react';
+import { Menu, X, User as UserIcon, LogOut } from 'lucide-react';
 import LoginScreen from './components/LoginScreen';
 import MainMenuScreen from './components/MainMenuScreen';
 import SettingsScreen from './components/SettingsScreen';
@@ -15,6 +15,7 @@ import FreeAgencyScreen from './components/FreeAgencyScreen';
 import CalendarScreen from './components/CalendarScreen';
 import LineupBuilderScreen from './components/LineupBuilderScreen';
 import DraftModeScreen from './components/DraftModeScreen';
+import SetupWizardScreen from './components/SetupWizardScreen';
 import { Screen, Player, User } from './types';
 import { defaultSettingsContract } from './settingsContract';
 
@@ -89,25 +90,25 @@ export default function App() {
 
       <nav className="flex-1 overflow-y-auto flex flex-col gap-2 font-mono text-[12px] font-bold tracking-widest uppercase">
         <button onClick={() => navigateTo('main-menu')} className={`flex items-center gap-3 p-3 rounded hover:bg-white/5 transition-colors ${currentScreen === 'main-menu' ? 'bg-white/10 text-white' : ''}`}>
-          <Home className="w-5 h-5 text-tertiary" /> Dashboard
+          Dashboard
         </button>
         <button onClick={handleNewGame} className="flex items-center gap-3 p-3 rounded hover:bg-white/5 transition-colors">
-          <Play className="w-5 h-5 text-tertiary" /> New Game
+          New Game
         </button>
 
         <div className="my-2 border-t border-[#2A2A2A]"></div>
 
         <button onClick={() => navigateTo('database')} className={`flex items-center gap-3 p-3 rounded hover:bg-white/5 transition-colors ${currentScreen === 'database' ? 'bg-white/10 text-white' : ''}`}>
-          <Database className="w-5 h-5 text-tertiary" /> Database
+          Database
         </button>
         <button onClick={() => navigateTo('stats')} className={`flex items-center gap-3 p-3 rounded hover:bg-white/5 transition-colors ${currentScreen === 'stats' ? 'bg-white/10 text-white' : ''}`}>
-          <Trophy className="w-5 h-5 text-tertiary" /> Stats
+          Stats
         </button>
         <button onClick={() => navigateTo('ecosystem')} className={`flex items-center gap-3 p-3 rounded hover:bg-white/5 transition-colors ${currentScreen === 'ecosystem' ? 'bg-white/10 text-white' : ''}`}>
-          <Globe className="w-5 h-5 text-tertiary" /> Ecosystem
+          Ecosystem
         </button>
         <button onClick={() => navigateTo('people-directory')} className={`flex items-center gap-3 p-3 rounded hover:bg-white/5 transition-colors ${currentScreen === 'people-directory' ? 'bg-white/10 text-white' : ''}`}>
-          <Users className="w-5 h-5 text-tertiary" /> People Directory
+          People Directory
         </button>
 
         <div className="my-2 border-t border-[#2A2A2A]"></div>
@@ -117,28 +118,28 @@ export default function App() {
           disabled={!isManagerPlus}
           className={`flex items-center gap-3 p-3 rounded transition-colors ${!isManagerPlus ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/5'} ${currentScreen === 'team-profile' ? 'bg-white/10 text-white' : ''}`}
         >
-          <Shield className="w-5 h-5 text-tertiary" /> Teams
+          Teams
         </button>
         <button
           onClick={() => isManagerPlus && navigateTo('roster-builder')}
           disabled={!isManagerPlus}
           className={`flex items-center gap-3 p-3 rounded transition-colors ${!isManagerPlus ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/5'} ${currentScreen === 'roster-builder' ? 'bg-white/10 text-white' : ''}`}
         >
-          <Wrench className="w-5 h-5 text-tertiary" /> Rosters
+          Rosters
         </button>
         <button
           onClick={() => isManagerPlus && navigateTo('calendar')}
           disabled={!isManagerPlus}
           className={`flex items-center gap-3 p-3 rounded transition-colors ${!isManagerPlus ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/5'} ${currentScreen === 'calendar' ? 'bg-white/10 text-white' : ''}`}
         >
-          <Calendar className="w-5 h-5 text-tertiary" /> Calendar
+          Calendar
         </button>
         <button
           onClick={() => isManagerPlus && navigateTo('lineup-builder')}
           disabled={!isManagerPlus}
           className={`flex items-center gap-3 p-3 rounded transition-colors ${!isManagerPlus ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/5'} ${currentScreen === 'lineup-builder' ? 'bg-white/10 text-white' : ''}`}
         >
-          <LayoutTemplate className="w-5 h-5 text-tertiary" /> Lineups
+          Lineups
         </button>
 
         <div className="my-2 border-t border-[#2A2A2A]"></div>
@@ -148,15 +149,27 @@ export default function App() {
           disabled={!isLeagueManagerPlus}
           className={`flex items-center gap-3 p-3 rounded transition-colors ${!isLeagueManagerPlus ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/5'} ${currentScreen === 'free-agency' ? 'bg-white/10 text-white' : ''}`}
         >
-          <RefreshCcw className="w-5 h-5 text-tertiary" /> Free Agency
+          Free Agency
         </button>
         <button
           onClick={() => isLeagueManagerPlus && navigateTo('draft-mode')}
           disabled={!isLeagueManagerPlus}
           className={`flex items-center gap-3 p-3 rounded transition-colors ${!isLeagueManagerPlus ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/5'} ${currentScreen === 'draft-mode' ? 'bg-white/10 text-white' : ''}`}
         >
-          <Trophy className="w-5 h-5 text-tertiary" /> Draft
+          Draft
         </button>
+
+        {isLeagueManagerPlus && (
+          <>
+            <div className="my-2 border-t border-[#2A2A2A]"></div>
+            <button
+              onClick={() => navigateTo('setup-wizard')}
+              className={`flex items-center gap-3 p-3 rounded transition-colors hover:bg-white/5 ${currentScreen === 'setup-wizard' ? 'bg-white/10 text-white' : 'text-tertiary'}`}
+            >
+              Setup Wizard
+            </button>
+          </>
+        )}
 
       </nav>
 
@@ -309,6 +322,8 @@ export default function App() {
               )}
 
               {currentScreen === 'scorekeeper' && <ScorekeeperScreen contract={defaultSettingsContract} onBack={() => setCurrentScreen('settings')} />}
+
+              {currentScreen === 'setup-wizard' && <SetupWizardScreen onCancel={() => setCurrentScreen('main-menu')} onFinish={() => setCurrentScreen('main-menu')} />}
             </div>
           </div>
         </>
