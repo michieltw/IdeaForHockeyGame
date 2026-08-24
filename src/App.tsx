@@ -22,6 +22,16 @@ export default function App() {
   const [viewedPerson, setViewedPerson] = useState<any>(null);
   const [currentScreen, setCurrentScreen] = useState<Screen>('splash');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isFading, setIsFading] = useState(false);
+
+  const toggleTheme = () => {
+    setIsFading(true);
+    setTimeout(() => {
+      setIsDarkMode(prev => !prev);
+      setIsFading(false);
+    }, 1500);
+  };
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [scheduledGameData, setScheduledGameData] = useState<{
     id?: string;
@@ -66,7 +76,12 @@ export default function App() {
   const renderSidebarContent = () => (
     <div className="flex flex-col h-full bg-[#050505] text-on-surface-variant p-4 w-64 border-r border-[#2A2A2A]">
       <div className="flex items-center justify-between mb-8">
-        <span className="font-display font-bold text-lg text-white">MENU</span>
+        <img
+          src="https://cdn.shopify.com/s/files/1/1038/7203/7203/files/house_league.png?v=1783714846"
+          alt="House League Logo"
+          className="h-10 object-contain cursor-pointer"
+          onClick={() => alert("Coming soon")}
+        />
         <button onClick={() => setIsSidebarOpen(false)} className="p-1 hover:text-white transition-colors">
           <X className="w-6 h-6" />
         </button>
@@ -146,6 +161,13 @@ export default function App() {
       </nav>
 
       <div className="mt-4 pt-4 border-t border-[#2A2A2A]">
+        <div className="flex justify-center mb-4">
+          <img
+            src="https://cdn.shopify.com/s/files/1/1038/7203/7203/files/BOLOGOBLACK.png?v=1784323868"
+            alt="Blackout Logo"
+            className="h-8 object-contain"
+          />
+        </div>
         <button onClick={handleLogout} className="flex items-center gap-3 p-3 w-full text-left rounded hover:bg-error/10 hover:text-error transition-colors font-mono text-[12px] font-bold tracking-widest uppercase">
           <LogOut className="w-5 h-5" /> Logout
         </button>
@@ -154,7 +176,11 @@ export default function App() {
   );
 
   return (
-    <div className="w-full min-h-screen bg-background text-on-background font-body overflow-x-hidden selection:bg-tertiary selection:text-on-tertiary flex relative">
+    <div className={`w-full min-h-screen font-body overflow-x-hidden selection:bg-tertiary selection:text-on-tertiary flex relative ${isDarkMode ? 'bg-background text-on-background' : 'bg-white text-black light-mode'}`}>
+      {/* Theme Transition Overlay */}
+      <div
+        className={`fixed inset-0 bg-black z-[100] pointer-events-none transition-opacity duration-1500 ease-in-out ${isFading ? 'opacity-100' : 'opacity-0'}`}
+      />
       {currentScreen === 'splash' && <LoginScreen onLogin={(user) => {
         setCurrentUser(user);
         setCurrentScreen('main-menu');
@@ -172,6 +198,16 @@ export default function App() {
 
           {/* Sidebar Navigation */}
           <div className={`fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            {/* Sidebar Background Layer */}
+            <div
+              className="absolute inset-0 pointer-events-none opacity-[0.03] z-[-1]"
+              style={{
+                backgroundImage: 'url(https://cdn.shopify.com/s/files/1/1038/7203/7203/files/hlalternate_background.png?v=1784150190)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat'
+              }}
+            />
             {renderSidebarContent()}
           </div>
 
@@ -184,6 +220,15 @@ export default function App() {
               >
                 <Menu className="w-6 h-6" />
               </button>
+
+              <div className="flex-1 flex justify-center pointer-events-auto items-center">
+                 <img
+                  src="https://cdn.shopify.com/s/files/1/1038/7203/7203/files/BOLOGOBLACK.png?v=1784323868"
+                  alt="Blackout Logo"
+                  className={`h-8 object-contain cursor-pointer transition-all duration-300 ${isDarkMode ? 'invert' : ''}`}
+                  onClick={toggleTheme}
+                />
+              </div>
 
               <div className="flex gap-3 pointer-events-auto">
                 <button

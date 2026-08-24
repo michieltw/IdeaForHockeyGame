@@ -8,9 +8,9 @@ interface TeamProfileScreenProps {
 export default function TeamProfileScreen({ onBack }: TeamProfileScreenProps) {
   // Mock data for visualizing Phase 3 features
   const mockTeam = {
-    name: 'Blackout HC',
+    name: 'Green Grizzly',
     division: 'Division 1',
-    club: 'Blackout Club'
+    club: 'House League'
   };
 
   const mockRoster = [
@@ -44,7 +44,7 @@ export default function TeamProfileScreen({ onBack }: TeamProfileScreenProps) {
         {/* Team Details Header */}
         <div className="bg-surface-container-low border border-[#2A2A2A] rounded-lg p-6 flex items-center gap-6">
           <div className="w-20 h-20 bg-surface-container-highest border border-[#2A2A2A] rounded-full flex items-center justify-center text-tertiary shadow-lg">
-            <Shield className="w-10 h-10" />
+            <img src="https://cdn.shopify.com/s/files/1/1038/7203/7203/files/HLGreenGrizzly.png?v=1783799596" alt="Team Logo" className="w-16 h-16 object-contain" />
           </div>
           <div className="flex flex-col">
             <h2 className="text-2xl font-bold text-white">{mockTeam.name}</h2>
