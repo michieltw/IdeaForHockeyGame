@@ -41,10 +41,13 @@ describe('MediaControls', () => {
     expect(onToggle).toHaveBeenCalledTimes(1);
   });
 
-  it('renders all filter buttons with correct texts', () => {
+  it('renders all filter buttons with correct texts when expanded', () => {
     const onToggle = vi.fn();
     const setFilter = vi.fn();
     render(<MediaControls isRunning={false} onToggle={onToggle} filter="all" setFilter={setFilter} />);
+
+    const expandButton = screen.getAllByRole('button')[1];
+    fireEvent.click(expandButton);
 
     expect(screen.getByText('Alles')).toBeInTheDocument();
     expect(screen.getByText('Schoten')).toBeInTheDocument();
@@ -52,10 +55,13 @@ describe('MediaControls', () => {
     expect(screen.getByText('Straffen')).toBeInTheDocument();
   });
 
-  it('highlights the active filter', () => {
+  it('highlights the active filter when expanded', () => {
     const onToggle = vi.fn();
     const setFilter = vi.fn();
     render(<MediaControls isRunning={false} onToggle={onToggle} filter="goal" setFilter={setFilter} />);
+
+    const expandButton = screen.getAllByRole('button')[1];
+    fireEvent.click(expandButton);
 
     const allButton = screen.getByText('Alles');
     const goalButton = screen.getByText('Doelp.');
@@ -68,6 +74,9 @@ describe('MediaControls', () => {
     const onToggle = vi.fn();
     const setFilter = vi.fn();
     render(<MediaControls isRunning={false} onToggle={onToggle} filter="all" setFilter={setFilter} />);
+
+    const expandButton = screen.getAllByRole('button')[1];
+    fireEvent.click(expandButton);
 
     const shotButton = screen.getByText('Schoten');
     fireEvent.click(shotButton);

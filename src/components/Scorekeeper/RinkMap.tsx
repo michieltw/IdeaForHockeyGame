@@ -156,8 +156,12 @@ export default function RinkMap({
             <div className="absolute top-0 bottom-0 right-[8%] w-[2px] bg-red-600 z-10"></div>
 
             {/* Goal Creases */}
-            <div className="absolute top-1/2 left-[8%] w-5 h-10 border-2 border-red-600 bg-blue-200/50 rounded-r-full -translate-y-1/2 z-10"></div>
-            <div className="absolute top-1/2 right-[8%] w-5 h-10 border-2 border-red-600 bg-blue-200/50 rounded-l-full -translate-y-1/2 z-10"></div>
+            <div className="absolute top-1/2 left-[8%] w-5 h-10 border-2 border-red-600 bg-blue-200/50 rounded-r-full -translate-y-1/2 z-10">
+              <div className="absolute inset-0 rounded-r-full opacity-30 blur-sm pointer-events-none" style={{ backgroundColor: homeColor || '#ffffff' }}></div>
+            </div>
+            <div className="absolute top-1/2 right-[8%] w-5 h-10 border-2 border-red-600 bg-blue-200/50 rounded-l-full -translate-y-1/2 z-10">
+              <div className="absolute inset-0 rounded-l-full opacity-30 blur-sm pointer-events-none" style={{ backgroundColor: awayColor || '#ef4444' }}></div>
+            </div>
 
             {/* Four End-Zone Faceoff Circles */}
             <div className="absolute top-[25%] left-[20%] w-16 h-16 border-2 border-red-600 rounded-full -translate-x-1/2 -translate-y-1/2 z-10"></div>
