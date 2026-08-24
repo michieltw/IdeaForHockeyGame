@@ -154,3 +154,27 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+.light-mode {
+  --color-background: #ffffff;
+  --color-on-background: #121212;
+  --color-surface-container-lowest: #f8f9fa;
+  --color-surface-container-low: #f1f3f4;
+  --color-surface-container: #e9ecef;
+  --color-surface-container-high: #dee2e6;
+  --color-surface-container-highest: #ced4da;
+  --color-outline: #adb5bd;
+  --color-outline-variant: #ced4da;
+  --color-on-surface-variant: #495057;
+}
+
+.light-mode .bg-\[\#050505\] {
+  background-color: #f8f9fa !important;
+}
+
+.light-mode .text-white {
+  color: #121212 !important;
+}
+.light-mode .border-\[\#2A2A2A\] {
+  border-color: #ced4da !important;
+}

@@ -59,7 +59,7 @@ export default function MyProfileScreen({ currentUser, viewedPerson, onBack }: M
             <div className="absolute top-0 right-0 w-32 h-32 bg-tertiary/10 rounded-full blur-3xl pointer-events-none"></div>
 
             <div className="w-24 h-24 rounded-full bg-surface-container-highest border-2 border-tertiary flex items-center justify-center text-tertiary shadow-lg">
-                <UserIcon className="w-12 h-12" />
+                <img src="https://cdn.shopify.com/s/files/1/1038/7203/7203/files/placeholder_profile_player_male.png?v=1784405789" alt="Profile" className="w-full h-full object-cover rounded-full" />
             </div>
 
             <div className="flex flex-col items-center md:items-start flex-1 z-10">
