@@ -18,7 +18,7 @@
       "boarding_call", "other"
     ],
     "official_role": ["referee", "linesman", "timekeeper", "bench_official", "authorized_official"],
-    "player_status": ["active", "injured", "suspended", "inactive", "on_loan"],
+    "player_status": ["active", "injured", "suspended", "inactive", "retired", "on_loan"],
     "special_team_type": ["power_play", "penalty_kill", "even_strength"],
     "draft_status": ["upcoming", "in_progress", "completed"],
     "equipment_type": ["stick", "skates", "helmet", "gloves", "pads", "jersey", "socks", "tape", "other"],
@@ -28,11 +28,11 @@
     // Inline Column & Catalogue Lookups
     "roster_status": ["open", "closed", "locked"],
     "handedness": ["left", "right"],
-    "game_status": ["scheduled", "in_progress", "completed", "postponed", "cancelled"],
+    "game_status": ["scheduled", "in_progress", "pre_game", "completed", "postponed", "cancelled"],
     "visibility": ["public", "private", "unlisted"],
     "sponsorship_level": ["gold", "silver", "bronze"],
     "season_role": ["primary", "backup", "call_up", "loan"],
-    "license_category": ["elite", "professional", "amateur", "youth"],
+    "license_category": ["professional", "semi_pro", "recreational", "woman", "youth"],
     "compliance_status": ["compliant", "pending_review", "non_compliant"]
   };
 
