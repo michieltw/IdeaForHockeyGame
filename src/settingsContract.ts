@@ -357,7 +357,7 @@ export const defaultSettingsContract: SettingsContract = {
   scoreHeaderLabels: {
     period: 'PERIODE',
     sog: 'SOG:',
-    penaltyBox: 'STRAFBANK',
+    penaltyBox: '',
     penaltiesDisabled: 'Straffen uitgeschakeld',
     noPenalties: 'Geen straffen',
     minutes: 'MIN',

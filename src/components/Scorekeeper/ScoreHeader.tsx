@@ -115,21 +115,21 @@ export default function ScoreHeader({
       </button>
       <div className="flex justify-between items-center relative z-10 pt-4 px-2">
         {/* Team 1: Home */}
-        <div className="flex items-center gap-3 w-1/3">
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full flex items-center justify-center mb-1 overflow-hidden shrink-0 border-2 border-white/20 shadow-lg bg-[#222]">
+        <div className="flex items-center gap-1 sm:gap-3 w-[30%] min-w-0">
+          <div className="flex flex-col items-center flex-1 min-w-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center mb-1 overflow-hidden shrink-0 border-2 border-white/20 shadow-lg bg-[#222]">
               {homeLogo && !homeLogoError ? (
                 <img src={homeLogo} alt={homeTeam} className="w-full h-full object-cover" onError={() => setHomeLogoError(true)} />
               ) : (
                 <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: homeColor }}>
-                  <PawPrint className="text-white w-7 h-7 drop-shadow-md" fill="currentColor" />
+                  <PawPrint className="text-white w-5 h-5 sm:w-7 sm:h-7 drop-shadow-md" fill="currentColor" />
                 </div>
               )}
             </div>
-            <span className="font-bold text-lg" style={{ color: homeColor }}>{homeTeam}</span>
+            <span className="font-bold text-xs sm:text-lg truncate w-full text-center" style={{ color: homeColor }}>{homeTeam}</span>
           </div>
-          <div className="flex flex-col items-center">
-            <div className="text-5xl font-bold leading-none">{gameState.scoreHome}</div>
+          <div className="flex flex-col items-center shrink-0">
+            <div className="text-4xl sm:text-5xl font-bold leading-none">{gameState.scoreHome}</div>
             <div className="text-[10px] text-gray-400 font-bold mt-1">
               {labels?.sog || ''} <span>{gameState.sogHome}</span>
             </div>
@@ -168,24 +168,24 @@ export default function ScoreHeader({
         </div>
 
         {/* Team 2: Away */}
-        <div className="flex items-center justify-end gap-3 w-1/3">
-          <div className="flex flex-col items-center">
-            <div className="text-5xl font-bold leading-none">{gameState.scoreAway}</div>
+        <div className="flex items-center justify-end gap-1 sm:gap-3 w-[30%] min-w-0">
+          <div className="flex flex-col items-center shrink-0">
+            <div className="text-4xl sm:text-5xl font-bold leading-none">{gameState.scoreAway}</div>
             <div className="text-[10px] text-gray-400 font-bold mt-1">
               {labels?.sog || ''} <span>{gameState.sogAway}</span>
             </div>
           </div>
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full flex items-center justify-center mb-1 overflow-hidden shrink-0 border-2 border-white/20 shadow-lg bg-[#222]">
+          <div className="flex flex-col items-center flex-1 min-w-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center mb-1 overflow-hidden shrink-0 border-2 border-white/20 shadow-lg bg-[#222]">
               {awayLogo && !awayLogoError ? (
                 <img src={awayLogo} alt={awayTeam} className="w-full h-full object-cover" onError={() => setAwayLogoError(true)} />
               ) : (
                 <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: awayColor }}>
-                  <Cat className="text-white w-7 h-7 drop-shadow-md" fill="currentColor" />
+                  <Cat className="text-white w-5 h-5 sm:w-7 sm:h-7 drop-shadow-md" fill="currentColor" />
                 </div>
               )}
             </div>
-            <span className="font-bold text-lg" style={{ color: awayColor }}>{awayTeam}</span>
+            <span className="font-bold text-xs sm:text-lg truncate w-full text-center" style={{ color: awayColor }}>{awayTeam}</span>
           </div>
         </div>
       </div>
@@ -193,10 +193,7 @@ export default function ScoreHeader({
       {/* Penalty Boxes */}
       <div className="flex justify-between mt-4 px-1 gap-2 text-xs">
         {/* Home Penalty Box */}
-        <div className="flex-1 bg-black/40 rounded p-1 flex flex-col border border-gray-700 min-h-[50px] max-h-28 overflow-y-auto">
-          <div className="text-center text-[9px] text-gray-400 mb-1 border-b border-gray-700 pb-1 font-bold">
-            {labels?.penaltyBox || ''} ({homeTeam})
-          </div>
+        <div className="flex-1 bg-black/40 rounded p-1 flex flex-col border border-gray-700 min-h-[30px] max-h-28 overflow-y-auto">
           {!trackPenalties ? (
             <div className="text-center text-[10px] text-gray-500 py-1 font-mono italic">{labels?.penaltiesDisabled || ''}</div>
           ) : homePenalties.length === 0 ? (
@@ -219,10 +216,7 @@ export default function ScoreHeader({
         </div>
 
         {/* Away Penalty Box */}
-        <div className="flex-1 bg-black/40 rounded p-1 flex flex-col border border-gray-700 min-h-[50px] max-h-28 overflow-y-auto">
-          <div className="text-center text-[9px] text-gray-400 mb-1 border-b border-gray-700 pb-1 font-bold">
-            {labels?.penaltyBox || ''} ({awayTeam})
-          </div>
+        <div className="flex-1 bg-black/40 rounded p-1 flex flex-col border border-gray-700 min-h-[30px] max-h-28 overflow-y-auto">
           {!trackPenalties ? (
             <div className="text-center text-[10px] text-gray-500 py-1 font-mono italic">{labels?.penaltiesDisabled || ''}</div>
           ) : awayPenalties.length === 0 ? (

@@ -226,6 +226,7 @@ export default function App() {
 
           <div className="flex-1 flex flex-col min-h-screen relative w-full transition-all duration-300">
             {/* Top Bar */}
+            {currentScreen !== 'scorekeeper' && (
             <div className="flex items-center justify-between p-4 z-30 relative pointer-events-none">
               <button
                 onClick={() => setIsSidebarOpen(true)}
@@ -271,9 +272,10 @@ export default function App() {
                 </button>
               </div>
             </div>
+            )}
 
             {/* Main Content Area */}
-            <div className="flex-1 w-full flex flex-col relative z-10 -mt-16">
+            <div className={`flex-1 w-full flex flex-col relative z-10 ${currentScreen !== 'scorekeeper' ? '-mt-16' : ''}`}>
               {currentScreen === 'main-menu' && (
                 <MainMenuScreen
                   currentUser={currentUser}
