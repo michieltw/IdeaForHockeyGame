@@ -11,10 +11,10 @@
     "event_type": ["game", "practice", "scrimmage", "training", "friendly_match"],
     "rsvp_status": ["accepted", "declined", "tentative", "not_responded"],
     "trigger_event_type": [
-      "goal_even_strength", "goal_penalty_shot", "goal_power_play_5v4", "goal_power_play_5v3", 
-      "goal_shorthanded_4v5", "goal_shorthanded_3v5", "goal_empty_net", "shootout_goal", 
-      "shootout_miss", "shot_on_goal", "penalty", "faceoff_won", "period_end", "period_start", 
-      "game_start", "game_end", "offside", "icing", "timeout", "official_challenge", 
+      "goal_even_strength", "goal_penalty_shot", "goal_power_play_5v4", "goal_power_play_5v3",
+      "goal_shorthanded_4v5", "goal_shorthanded_3v5", "goal_empty_net", "shootout_goal",
+      "shootout_miss", "shot_on_goal", "penalty", "faceoff_won", "period_end", "period_start",
+      "game_start", "game_end", "offside", "icing", "timeout", "official_challenge",
       "boarding_call", "other"
     ],
     "official_role": ["referee", "linesman", "timekeeper", "bench_official", "authorized_official"],

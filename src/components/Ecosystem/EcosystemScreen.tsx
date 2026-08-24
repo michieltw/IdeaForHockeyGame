@@ -1,3 +1,4 @@
+import { dbSchema } from '../../types';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Globe, Database, Building2, MapPin, CalendarDays, Shield, Plus, RefreshCw } from 'lucide-react';
 import { getGasUrl } from '../../utils/gasUrl';
@@ -74,32 +75,16 @@ function useEcosystemData(sheetName: string) {
   return { data, loading, error, saveData, fetchData };
 }
 
-type Tab = 'organizations' | 'leagues' | 'divisions' | 'seasons' | 'clubs' | 'venues' | 'users' | 'persons' | 'personJobs' | 'playerProfiles' | 'playerEquipment' | 'teams' | 'rosters';
+type Tab = string;
 
 export default function EcosystemScreen({ onBack }: EcosystemScreenProps) {
   const [activeTab, setActiveTab] = useState<Tab>('organizations');
 
-  const sheetNameMap: Record<Tab, string> = {
-    organizations: 'Organizations',
-    leagues: 'Leagues',
-    divisions: 'Divisions',
-    seasons: 'Seasons',
-    clubs: 'Clubs',
-    venues: 'Venues',
-    users: 'Users',
-    persons: 'Persons',
-    personJobs: 'PersonJobs',
-    playerProfiles: 'PlayerProfiles',
-    playerEquipment: 'PlayerEquipment',
-    teams: 'Teams',
-    rosters: 'Rosters'
-  };
-
-  const { data, loading, error, saveData, fetchData } = useEcosystemData(sheetNameMap[activeTab]);
+  const { data, loading, error, saveData, fetchData } = useEcosystemData(activeTab);
 
   const handleAddMockRow = () => {
     const id = Math.random().toString(36).substring(2, 9).toUpperCase();
-    const mockRow = [id, `New ${sheetNameMap[activeTab]}`, 'Auto-generated'];
+    const mockRow = [id, `New ${activeTab}`, 'Auto-generated'];
     saveData(mockRow);
   };
 
@@ -122,125 +107,24 @@ export default function EcosystemScreen({ onBack }: EcosystemScreenProps) {
 
       {/* Tabs */}
       <div className="flex overflow-x-auto border-b border-[#2A2A2A] bg-surface-container-lowest sticky top-[65px] z-40 hide-scrollbar">
-        <button
-          onClick={() => setActiveTab('organizations')}
-          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
-            activeTab === 'organizations' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
-          }`}
-        >
-          <Building2 className="w-4 h-4" />
-          Orgs
-        </button>
-        <button
-          onClick={() => setActiveTab('leagues')}
-          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
-            activeTab === 'leagues' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
-          }`}
-        >
-          <Globe className="w-4 h-4" />
-          Leagues
-        </button>
-        <button
-          onClick={() => setActiveTab('divisions')}
-          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
-            activeTab === 'divisions' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
-          }`}
-        >
-          <Shield className="w-4 h-4" />
-          Divisions
-        </button>
-        <button
-          onClick={() => setActiveTab('seasons')}
-          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
-            activeTab === 'seasons' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
-          }`}
-        >
-          <CalendarDays className="w-4 h-4" />
-          Seasons
-        </button>
-        <button
-          onClick={() => setActiveTab('clubs')}
-          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
-            activeTab === 'clubs' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
-          }`}
-        >
-          <Database className="w-4 h-4" />
-          Clubs
-        </button>
-        <button
-          onClick={() => setActiveTab('venues')}
-          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
-            activeTab === 'venues' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
-          }`}
-        >
-          <MapPin className="w-4 h-4" />
-          Venues
-        </button>
-        {/* Phase 2 Tabs */}
-        <button
-          onClick={() => setActiveTab('users')}
-          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
-            activeTab === 'users' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
-          }`}
-        >
-          Users
-        </button>
-        <button
-          onClick={() => setActiveTab('persons')}
-          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
-            activeTab === 'persons' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
-          }`}
-        >
-          Persons
-        </button>
-        <button
-          onClick={() => setActiveTab('personJobs')}
-          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
-            activeTab === 'personJobs' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
-          }`}
-        >
-          Jobs
-        </button>
-        <button
-          onClick={() => setActiveTab('playerProfiles')}
-          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
-            activeTab === 'playerProfiles' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
-          }`}
-        >
-          Profiles
-        </button>
-        <button
-          onClick={() => setActiveTab('playerEquipment')}
-          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
-            activeTab === 'playerEquipment' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
-          }`}
-        >
-          Equipment
-        </button>
-        {/* Phase 3 Tabs */}
-        <button
-          onClick={() => setActiveTab('teams')}
-          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
-            activeTab === 'teams' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
-          }`}
-        >
-          Teams
-        </button>
-        <button
-          onClick={() => setActiveTab('rosters')}
-          className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
-            activeTab === 'rosters' ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
-          }`}
-        >
-          Rosters
-        </button>
+        {Object.keys(dbSchema).map((tableName) => (
+          <button
+            key={tableName}
+            onClick={() => setActiveTab(tableName)}
+            className={`flex-none px-4 py-3 font-mono text-[11px] font-bold tracking-widest uppercase flex items-center gap-2 border-b-2 transition-colors ${
+              activeTab === tableName ? 'border-tertiary text-tertiary' : 'border-transparent text-on-surface-variant hover:text-white'
+            }`}
+          >
+            {tableName}
+          </button>
+        ))}
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 w-full max-w-3xl mx-auto flex flex-col gap-4">
         <div className="bg-surface-container-low rounded-lg p-6 border border-[#2A2A2A] flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <h2 className="font-mono text-[14px] font-bold tracking-widest uppercase text-white">
-              {sheetNameMap[activeTab]} Directory
+              {activeTab} Directory
             </h2>
             <div className="flex gap-2">
               <button
