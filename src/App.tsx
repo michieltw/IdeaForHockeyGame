@@ -243,7 +243,20 @@ export default function App() {
                 />
               </div>
 
-              <div className="flex gap-3 pointer-events-auto">
+              <div className="flex gap-3 pointer-events-auto items-center">
+                {import.meta.env.DEV && currentUser && (
+                  <select
+                    value={currentUser.role}
+                    onChange={(e) => setCurrentUser({ ...currentUser, role: e.target.value as any })}
+                    className="bg-[#050505] text-white border border-[#2A2A2A] rounded px-2 py-1 text-sm focus:outline-none focus:border-tertiary h-10"
+                  >
+                    <option value="Admin">Admin</option>
+                    <option value="League Manager">League Manager</option>
+                    <option value="Team Manager">Team Manager</option>
+                    <option value="Player">Player</option>
+                    <option value="Fan">Fan</option>
+                  </select>
+                )}
                 <button
                   onClick={() => navigateTo('my-profile')}
                   className="w-10 h-10 rounded-full bg-[#050505] border border-[#2A2A2A] hover:border-tertiary/60 flex items-center justify-center text-on-surface-variant hover:text-tertiary transition-all shadow-md active:scale-95 group relative"
