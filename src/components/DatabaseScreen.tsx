@@ -48,8 +48,50 @@ const generateGasCodeSnippet = (token: string) => `function setupSheet() {
   let venuesSheet = ss.getSheetByName("Venues");
   if (!venuesSheet) {
     venuesSheet = ss.insertSheet("Venues");
-    venuesSheet.appendRow(["VenueID", "Name", "Address", "Capacity"]);
-    venuesSheet.getRange("A1:D1").setFontWeight("bold");
+    venuesSheet.appendRow(["VenueID", "Name", "City", "Country", "Capacity", "Address", "Phone", "LockerRooms", "IceSheets"]);
+    venuesSheet.getRange("A1:I1").setFontWeight("bold");
+
+    const defaultVenues = [
+      ["VEN-001", "Kardinge IJsbaan", "Groningen", "Netherlands", 900, "Kardingerplein 1", "", 12, 1],
+      ["VEN-002", "Thialf", "Heerenveen", "Netherlands", 3500, "Pim Mulierlaan 1", "", "", 1],
+      ["VEN-003", "11Stedenhal", "Leeuwarden", "Netherlands", 400, "Fryslânplein 1", "", "", 1],
+      ["VEN-004", "De Meent", "Alkmaar", "Netherlands", 100, "Terborchlaan 301", "", "", 1],
+      ["VEN-005", "Triavium", "Nijmegen", "Netherlands", 1800, "Van Rosenburgweg 2", "", "", 1],
+      ["VEN-006", "IJsbaan Twente", "Enschede", "Netherlands", 100, "Colosseum 90", "", "", 1],
+      ["VEN-007", "Jaap Eden", "Amsterdam", "Netherlands", 2000, "Radioweg 64", "", "", 1],
+      ["VEN-008", "Uithof", "Den Haag", "Netherlands", 3000, "Jaap Edenweg 10", "", "", 1],
+      ["VEN-009", "IJssportcentrum", "Eindhoven", "Netherlands", 2500, "Antoon Coolenlaan 3", "", "", 2],
+      ["VEN-010", "Glanerbrook", "Geleen", "Netherlands", 1200, "Kummenaedestraat 45", "", "", 1],
+      ["VEN-013", "Sportboulevard Dordrecht", "Dordrecht", "Netherlands", 1800, "Fanny Blankers-Koenweg 10", "", "", 1],
+      ["VEN-014", "De Vechtsebanen", "Utrecht", "Netherlands", 2500, "Mississippidreef 151", "", "", 1],
+      ["VEN-015", "De Westfries", "Hoorn", "Netherlands", 100, "Westfriese Parkweg 5", "", "", 1],
+      ["VEN-017", "Stappegoor", "Tilburg", "Netherlands", 3000, "Stappegoorweg 1", "", "", 2],
+      ["VEN-018", "IJshal De Vliet", "Leiden", "Netherlands", 100, "Marie Diebenplaats 104", "", "", 1],
+      ["VEN-019", "IceFun Sportiom", "Den Bosch", "Netherlands", 800, "Victorialaan 10", "", "", 1],
+      ["VEN-020", "SilverDome", "Zoetermeer", "Netherlands", 1500, "Van der Hagenstraat 20", "", "", 1],
+      ["VEN-021", "Kunstijsbaan Breda", "Breda", "Netherlands", 500, "Terheijdenseweg 506", "", "", 1],
+      ["VEN-022", "Sport Vlaanderen Herentals", "Herentals", "Belgium", 200, "Vorselaarsebaan 60", "", "", 1],
+      ["VEN-023", "IJsbaan Haarlem", "Haarlem", "Netherlands", 100, "IJsbaanlaan 2", "", "", 1],
+      ["VEN-024", "Ice Park Beaufort", "Beaufort", "Luxembourgh", 500, "Grand-Rue 87", "", "", 1],
+      ["VEN-025", "IJsbaan Leuven", "Leuven", "Belgium", 800, "Ondernemingenweg 1", "", "", 1],
+      ["VEN-026", "Patinoire de Liège", "Luik (Liège)", "Belgium", 1300, "Boulevard Raymond Poincaré 7/112", "", "", 1],
+      ["VEN-027", "Patinoire de Charleroi", "Charleroi", "Belgium", 500, "Rue Neuve 75a", "", "", 1],
+      ["VEN-028", "IJsbaan Kristallijn", "Gent", "Belgium", 1000, "Warmoezeniersweg 20", "", "", 1],
+      ["VEN-029", "Sport Vlaanderen (Schaverdijn)", "Hasselt", "Belgium", 1000, "Gouverneur Verwilghensingel 13-15", "", "", 1],
+      ["VEN-030", "IJsbaan De Piste", "Kortrijk", "Belgium", 800, "Gentsesteenweg 131", "", "", 1],
+      ["VEN-031", "IJsbaan Netepark", "Herentals", "Belgium", 300, "Vorselaarsebaan 56", "", "", 1],
+      ["VEN-033", "IJsbaan Heuvelkouter", "Liedekerke", "Belgium", 1000, "Sportlaan 5", "", "", 1],
+      ["VEN-034", "Patinoire de Kockelscheuer", "Luxemburg", "Luxembourgh", 800, "42, Route de Bettembourg", "", "", 1],
+      ["VEN-035", "Sportcentrum Die Swaene", "Heist-op-den-Berg", "Belgium", 500, "Kasteelstraat 85", "", "", 1],
+      ["VEN-036", "Ice Skating Center Mechelen", "Mechelen", "Belgium", 600, "Spuibeekstraat 1", "", "", 1],
+      ["VEN-037", "IJsbaan Finlandia", "Gullegem", "Belgium", 500, "Driemasten 39", "", "", 1],
+      ["VEN-038", "Sportoase Groot Schijn", "Deurne", "Belgium", 1000, "Ruggeveldlaan 488", "", "", 1],
+      ["VEN-039", "Natuurijs", "N.T.B.", "N.T.B.", 100, "N.T.B.", "", 0, 1]
+    ];
+
+    defaultVenues.forEach(venue => {
+      venuesSheet.appendRow(venue);
+    });
   }
 
   // Settings Tab
