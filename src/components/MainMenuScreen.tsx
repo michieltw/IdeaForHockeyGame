@@ -30,7 +30,7 @@ export default function MainMenuScreen({ currentUser, onNewGame, onStartSchedule
       const gasUrl = getGasUrl();
       if (gasUrl) {
         try {
-          const res = await fetch(`${gasUrl}?action=getScheduledGames`);
+          const res = await fetch(gasUrl, { method: 'POST', body: JSON.stringify({ action: 'getScheduledGames' }) });
           const data = await res.json();
           if (Array.isArray(data) && data.length > 1) {
             const mapped = data.slice(1).map((row, i) => ({
@@ -100,7 +100,7 @@ export default function MainMenuScreen({ currentUser, onNewGame, onStartSchedule
     const gasUrl = getGasUrl();
     if (gasUrl) {
       try {
-        const res = await fetch(`${gasUrl}?action=getGames`);
+        const res = await fetch(gasUrl, { method: 'POST', body: JSON.stringify({ action: 'getGames' }) });
         const data = await res.json();
         if (data && data.length > 0) {
           // If we had a specific format we'd download it here

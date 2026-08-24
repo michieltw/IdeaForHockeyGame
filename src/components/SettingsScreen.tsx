@@ -204,8 +204,8 @@ export default function SettingsScreen({ scheduledGameData, contract, onStart, o
         if (gasUrl) {
           try {
             // Fetch teams and settings concurrently
-            const teamsPromise = fetch(`${gasUrl}?action=getTeams`).then(r => r.json()).catch(console.error);
-            const settingsPromise = fetch(`${gasUrl}?action=getSettings`).then(r => r.json()).catch(console.error);
+            const teamsPromise = fetch(gasUrl, { method: 'POST', body: JSON.stringify({ action: 'getTeams' }) }).then(r => r.json()).catch(console.error);
+            const settingsPromise = fetch(gasUrl, { method: 'POST', body: JSON.stringify({ action: 'getSettings' }) }).then(r => r.json()).catch(console.error);
 
             const [teamsData, data] = await Promise.all([teamsPromise, settingsPromise]);
 
@@ -214,7 +214,7 @@ export default function SettingsScreen({ scheduledGameData, contract, onStart, o
               for (let i = 1; i < teamsData.length; i++) {
                 const row = teamsData[i];
                 if (!row || row.length < 5) continue;
-                const [tName, pId, pNum, pName, pPos] = row;
+                const [tName, pId, pName, pNum, pPos] = [row[0] /* roster_id or team mapping */, row[2] /* person_id */, row[3] /* person_full_name */, row[4] /* jersey_number */, row[5] /* position */];
                 if (!tName) continue;
                 if (!teamMap[tName]) teamMap[tName] = [];
                 teamMap[tName].push({ id: pId || Date.now().toString() + i, number: pNum || '', name: pName || '', position: pPos || '' });

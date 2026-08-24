@@ -1,3 +1,4 @@
+import { dbSchema } from '../types';
 import { getGasUrl } from '../utils/gasUrl';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Trophy, Users, Loader2 } from 'lucide-react';
@@ -29,8 +30,8 @@ export default function StatsScreen({ onBack }: StatsScreenProps) {
 
       try {
         const [standingsRes, statsRes] = await Promise.all([
-          fetch(`${gasUrl}?action=getStandings`),
-          fetch(`${gasUrl}?action=getStats`)
+          fetch(`${gasUrl}`, { method: 'POST', body: JSON.stringify({ action: 'getStandings' }) }),
+          fetch(`${gasUrl}`, { method: 'POST', body: JSON.stringify({ action: 'getStats' }) })
         ]);
 
         const standingsData = await standingsRes.json();
@@ -113,7 +114,7 @@ export default function StatsScreen({ onBack }: StatsScreenProps) {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-[#121414] border-b border-[#2A2A2A]">
-                    {standings[0].map((header: string, i: number) => (
+                    {(dbSchema['standings'] || standings[0]).map((header: string, i: number) => (
                       <th key={i} className="p-3 text-xs font-mono font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">
                         {header}
                       </th>
@@ -142,7 +143,7 @@ export default function StatsScreen({ onBack }: StatsScreenProps) {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-[#121414] border-b border-[#2A2A2A]">
-                    {stats[0].map((header: string, i: number) => (
+                    {(dbSchema['player_stats'] || stats[0]).map((header: string, i: number) => (
                       <th key={i} className="p-3 text-xs font-mono font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">
                         {header}
                       </th>
