@@ -1,4 +1,5 @@
 import { getGasUrl } from '../utils/gasUrl';
+import { fetchGasData } from '../utils/fetchGas';
 import { useState, useEffect } from 'react';
 import { Play, ArrowLeft } from 'lucide-react';
 import { GameConfig, Player } from '../types';
@@ -204,8 +205,8 @@ export default function SettingsScreen({ scheduledGameData, contract, onStart, o
         if (gasUrl) {
           try {
             // Fetch teams and settings concurrently
-            const teamsPromise = fetch(gasUrl, { method: 'POST', body: JSON.stringify({ action: 'getTeams' }) }).then(r => r.json()).catch(console.error);
-            const settingsPromise = fetch(gasUrl, { method: 'POST', body: JSON.stringify({ action: 'getSettings' }) }).then(r => r.json()).catch(console.error);
+            const teamsPromise = fetchGasData(gasUrl, { action: 'getTeams' }).then(r => r.json()).catch(console.error);
+            const settingsPromise = fetchGasData(gasUrl, { action: 'getSettings' }).then(r => r.json()).catch(console.error);
 
             const [teamsData, data] = await Promise.all([teamsPromise, settingsPromise]);
 
