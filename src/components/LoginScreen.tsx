@@ -154,6 +154,16 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
             </button>
           </form>
 
+            {/* Guest Login Action */}
+            <button
+              className="btn-secondary w-full py-3 rounded font-mono text-[12px] font-bold tracking-widest uppercase text-tertiary border border-tertiary hover:bg-tertiary/10 flex items-center justify-center gap-2 transition-transform duration-150 active:scale-95"
+              type="button"
+              onClick={() => onLogin({ id: 'guest', email: 'guest@blackouthockey.com', role: 'Guest' })}
+            >
+              CONTINUE AS GUEST
+            </button>
+
+
           <div className="flex flex-col items-center gap-4 mt-2">
             <p className="text-[16px] text-on-surface-variant">
               {isSignUp ? "Already have an account?" : "Don't have an account?"}{' '}

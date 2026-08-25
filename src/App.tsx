@@ -71,7 +71,10 @@ export default function App() {
     setIsSidebarOpen(false);
   };
 
-  const isManagerPlus = currentUser && ['Admin', 'League Manager', 'Team Manager'].includes(currentUser.role);
+  const isAdmin = currentUser && currentUser.role === 'Admin';
+
+  const isTeamManagerPlus = currentUser && ['Admin', 'League Manager', 'Team Manager'].includes(currentUser.role);
+  const isPlayerPlus = currentUser && ['Admin', 'League Manager', 'Team Manager', 'Player'].includes(currentUser.role);
   const isLeagueManagerPlus = currentUser && ['Admin', 'League Manager'].includes(currentUser.role);
 
   const renderSidebarContent = () => (
@@ -92,7 +95,7 @@ export default function App() {
         <button onClick={() => navigateTo('main-menu')} className={`flex items-center gap-3 p-3 rounded hover:bg-white/5 transition-colors ${currentScreen === 'main-menu' ? 'bg-white/10 text-white' : ''}`}>
           Dashboard
         </button>
-        <button onClick={handleNewGame} className="flex items-center gap-3 p-3 rounded hover:bg-white/5 transition-colors">
+        <button onClick={() => isPlayerPlus && handleNewGame()} disabled={!isPlayerPlus} className={`flex items-center gap-3 p-3 rounded transition-colors ${!isPlayerPlus ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/5'}`}>
           New Game
         </button>
 
@@ -104,7 +107,7 @@ export default function App() {
         <button onClick={() => navigateTo('stats')} className={`flex items-center gap-3 p-3 rounded hover:bg-white/5 transition-colors ${currentScreen === 'stats' ? 'bg-white/10 text-white' : ''}`}>
           Stats
         </button>
-        <button onClick={() => navigateTo('ecosystem')} className={`flex items-center gap-3 p-3 rounded hover:bg-white/5 transition-colors ${currentScreen === 'ecosystem' ? 'bg-white/10 text-white' : ''}`}>
+        <button onClick={() => isLeagueManagerPlus && navigateTo('ecosystem')} disabled={!isLeagueManagerPlus} className={`flex items-center gap-3 p-3 rounded transition-colors ${!isLeagueManagerPlus ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/5'} ${currentScreen === 'ecosystem' ? 'bg-white/10 text-white' : ''}`}>
           Ecosystem
         </button>
         <button onClick={() => navigateTo('people-directory')} className={`flex items-center gap-3 p-3 rounded hover:bg-white/5 transition-colors ${currentScreen === 'people-directory' ? 'bg-white/10 text-white' : ''}`}>
@@ -114,30 +117,30 @@ export default function App() {
         <div className="my-2 border-t border-[#2A2A2A]"></div>
 
         <button
-          onClick={() => isManagerPlus && navigateTo('team-profile')}
-          disabled={!isManagerPlus}
-          className={`flex items-center gap-3 p-3 rounded transition-colors ${!isManagerPlus ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/5'} ${currentScreen === 'team-profile' ? 'bg-white/10 text-white' : ''}`}
+          onClick={() => isTeamManagerPlus && navigateTo('team-profile')}
+          disabled={!isTeamManagerPlus}
+          className={`flex items-center gap-3 p-3 rounded transition-colors ${!isTeamManagerPlus ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/5'} ${currentScreen === 'team-profile' ? 'bg-white/10 text-white' : ''}`}
         >
           Teams
         </button>
         <button
-          onClick={() => isManagerPlus && navigateTo('roster-builder')}
-          disabled={!isManagerPlus}
-          className={`flex items-center gap-3 p-3 rounded transition-colors ${!isManagerPlus ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/5'} ${currentScreen === 'roster-builder' ? 'bg-white/10 text-white' : ''}`}
+          onClick={() => isTeamManagerPlus && navigateTo('roster-builder')}
+          disabled={!isTeamManagerPlus}
+          className={`flex items-center gap-3 p-3 rounded transition-colors ${!isTeamManagerPlus ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/5'} ${currentScreen === 'roster-builder' ? 'bg-white/10 text-white' : ''}`}
         >
           Rosters
         </button>
         <button
-          onClick={() => isManagerPlus && navigateTo('calendar')}
-          disabled={!isManagerPlus}
-          className={`flex items-center gap-3 p-3 rounded transition-colors ${!isManagerPlus ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/5'} ${currentScreen === 'calendar' ? 'bg-white/10 text-white' : ''}`}
+          onClick={() => isTeamManagerPlus && navigateTo('calendar')}
+          disabled={!isTeamManagerPlus}
+          className={`flex items-center gap-3 p-3 rounded transition-colors ${!isTeamManagerPlus ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/5'} ${currentScreen === 'calendar' ? 'bg-white/10 text-white' : ''}`}
         >
           Calendar
         </button>
         <button
-          onClick={() => isManagerPlus && navigateTo('lineup-builder')}
-          disabled={!isManagerPlus}
-          className={`flex items-center gap-3 p-3 rounded transition-colors ${!isManagerPlus ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/5'} ${currentScreen === 'lineup-builder' ? 'bg-white/10 text-white' : ''}`}
+          onClick={() => isTeamManagerPlus && navigateTo('lineup-builder')}
+          disabled={!isTeamManagerPlus}
+          className={`flex items-center gap-3 p-3 rounded transition-colors ${!isTeamManagerPlus ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/5'} ${currentScreen === 'lineup-builder' ? 'bg-white/10 text-white' : ''}`}
         >
           Lineups
         </button>
@@ -255,7 +258,7 @@ export default function App() {
                     <option value="League Manager">League Manager</option>
                     <option value="Team Manager">Team Manager</option>
                     <option value="Player">Player</option>
-                    <option value="Fan">Fan</option>
+                    <option value="Guest">Guest</option>
                   </select>
                 )}
                 <button

@@ -1,4 +1,8 @@
-import { useState } from 'react';
+const fs = require('fs');
+
+let content = fs.readFileSync('src/components/MyProfileScreen.tsx', 'utf8');
+
+const newProfileLayout = `import { useState } from 'react';
 import { ArrowLeft, User as UserIcon, Briefcase, Ruler, Shield, Plus, Edit2, Calendar, Star, Medal, Camera, MessageCircle, UserPlus, MoreHorizontal } from 'lucide-react';
 import { User, Achievement, Award } from '../types';
 
@@ -128,41 +132,41 @@ export default function MyProfileScreen({ currentUser, viewedPerson, onBack }: M
             <div className="flex overflow-x-auto no-scrollbar gap-1 mt-4 md:mt-0 px-2 md:px-0">
                 <button
                     onClick={() => setActiveTab('about')}
-                    className={`py-3 px-4 font-bold text-sm rounded-md transition-colors whitespace-nowrap ${
+                    className={\`py-3 px-4 font-bold text-sm rounded-md transition-colors whitespace-nowrap \${
                         activeTab === 'about' ? 'text-tertiary bg-surface-container-low' : 'text-on-surface-variant hover:bg-surface-container-lowest'
-                    }`}
+                    }\`}
                 >
                     About
                 </button>
                 <button
                     onClick={() => setActiveTab('jobs')}
-                    className={`py-3 px-4 font-bold text-sm rounded-md transition-colors whitespace-nowrap ${
+                    className={\`py-3 px-4 font-bold text-sm rounded-md transition-colors whitespace-nowrap \${
                         activeTab === 'jobs' ? 'text-tertiary bg-surface-container-low' : 'text-on-surface-variant hover:bg-surface-container-lowest'
-                    }`}
+                    }\`}
                 >
                     Jobs
                 </button>
                 <button
                     onClick={() => setActiveTab('equipment')}
-                    className={`py-3 px-4 font-bold text-sm rounded-md transition-colors whitespace-nowrap ${
+                    className={\`py-3 px-4 font-bold text-sm rounded-md transition-colors whitespace-nowrap \${
                         activeTab === 'equipment' ? 'text-tertiary bg-surface-container-low' : 'text-on-surface-variant hover:bg-surface-container-lowest'
-                    }`}
+                    }\`}
                 >
                     Equipment
                 </button>
                 <button
                     onClick={() => setActiveTab('events')}
-                    className={`py-3 px-4 font-bold text-sm rounded-md transition-colors whitespace-nowrap ${
+                    className={\`py-3 px-4 font-bold text-sm rounded-md transition-colors whitespace-nowrap \${
                         activeTab === 'events' ? 'text-tertiary bg-surface-container-low' : 'text-on-surface-variant hover:bg-surface-container-lowest'
-                    }`}
+                    }\`}
                 >
                     Events
                 </button>
                 <button
                     onClick={() => setActiveTab('achievements')}
-                    className={`py-3 px-4 font-bold text-sm rounded-md transition-colors whitespace-nowrap ${
+                    className={\`py-3 px-4 font-bold text-sm rounded-md transition-colors whitespace-nowrap \${
                         activeTab === 'achievements' ? 'text-tertiary bg-surface-container-low' : 'text-on-surface-variant hover:bg-surface-container-lowest'
-                    }`}
+                    }\`}
                 >
                     Achievements
                 </button>
@@ -184,7 +188,7 @@ export default function MyProfileScreen({ currentUser, viewedPerson, onBack }: M
                         </div>
                         <div className="flex items-center gap-3 text-on-surface-variant">
                             <Ruler className="w-5 h-5 text-gray-400" />
-                            <span>Height: <strong className="text-white">{viewedPerson?.height || "6'1\""}</strong></span>
+                            <span>Height: <strong className="text-white">{viewedPerson?.height || "6'1\\""}</strong></span>
                         </div>
                         <div className="flex items-center gap-3 text-on-surface-variant">
                             <div className="w-5 text-center font-bold text-gray-400">W</div>
@@ -289,11 +293,11 @@ export default function MyProfileScreen({ currentUser, viewedPerson, onBack }: M
                                                 <button
                                                     key={status}
                                                     onClick={() => handleRsvpChange(event.id, status)}
-                                                    className={`flex-1 sm:flex-none px-3 py-1.5 text-sm font-bold rounded-md transition-colors ${
+                                                    className={\`flex-1 sm:flex-none px-3 py-1.5 text-sm font-bold rounded-md transition-colors \${
                                                         rsvps[event.id] === status
                                                             ? 'bg-tertiary text-black'
                                                             : 'bg-surface-container-highest text-on-surface-variant hover:text-white'
-                                                    }`}
+                                                    }\`}
                                                 >
                                                     {status}
                                                 </button>
@@ -345,3 +349,6 @@ export default function MyProfileScreen({ currentUser, viewedPerson, onBack }: M
     </div>
   );
 }
+`;
+
+fs.writeFileSync('src/components/MyProfileScreen.tsx', newProfileLayout);

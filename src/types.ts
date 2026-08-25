@@ -19,7 +19,7 @@ export interface Roster {
 export interface User {
   id: string;
   email: string;
-  role: 'Admin' | 'League Manager' | 'Team Manager' | 'Player' | 'Fan';
+  role: 'Admin' | 'League Manager' | 'Team Manager' | 'Player' | 'Guest';
   personId?: string;
 }
 
