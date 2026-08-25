@@ -230,7 +230,7 @@ export default function App() {
           <div className="flex-1 flex flex-col min-h-screen relative w-full transition-all duration-300">
             {/* Top Bar */}
             {currentScreen !== 'scorekeeper' && (
-            <div className="flex items-center justify-between p-4 z-30 relative pointer-events-none">
+            <div className="flex items-center justify-between p-4 z-30 sticky top-0 bg-background/80 backdrop-blur-md border-b border-white/5 pointer-events-auto">
               <button
                 onClick={() => setIsSidebarOpen(true)}
                 className="w-10 h-10 rounded bg-[#050505] border border-[#2A2A2A] hover:border-tertiary/60 flex items-center justify-center text-on-surface-variant hover:text-tertiary transition-all shadow-md pointer-events-auto active:scale-95"
@@ -278,7 +278,7 @@ export default function App() {
             )}
 
             {/* Main Content Area */}
-            <div className={`flex-1 w-full flex flex-col relative z-10 ${currentScreen !== 'scorekeeper' ? '-mt-16' : ''}`}>
+            <div className={`flex-1 w-full flex flex-col relative z-10 pb-8`}>
               {currentScreen === 'main-menu' && (
                 <MainMenuScreen
                   currentUser={currentUser}

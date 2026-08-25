@@ -63,7 +63,7 @@ export default function MainMenuScreen({ currentUser, onNewGame, onStartSchedule
   };
 
   return (
-    <div className="flex flex-col min-h-screen h-screen bg-background relative overflow-hidden pt-16">
+    <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
       {/* Background Outline Player */}
       <div
         className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center opacity-20"
@@ -135,7 +135,7 @@ export default function MainMenuScreen({ currentUser, onNewGame, onStartSchedule
           </button>
 
           {/* Announcements Section */}
-          <div className="bg-[#050505] border border-[#2A2A2A] rounded-lg p-4 flex flex-col gap-2 shadow-md">
+          <div className="bg-[#050505] border border-[#2A2A2A] rounded-lg p-4 flex flex-col gap-2 shadow-md mb-4">
             <span className="text-[12px] font-mono text-tertiary uppercase font-bold tracking-widest flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
               Announcements
@@ -152,7 +152,7 @@ export default function MainMenuScreen({ currentUser, onNewGame, onStartSchedule
                 <button
                   key={game.id}
                   onClick={() => onStartScheduledGame(game)}
-                  className="w-full text-left bg-surface-container-low hover:bg-white/5 border border-outline-variant/30 rounded p-3 transition-colors flex items-center justify-between group"
+                  className="w-full text-left bg-surface-container-low hover:bg-white/5 border border-outline-variant/30 rounded p-4 md:p-3 transition-colors flex items-center justify-between group"
                 >
                   <div className="flex flex-col">
                     <span className="text-sm font-bold text-white group-hover:text-tertiary transition-colors">{game.homeTeam} vs {game.awayTeam}</span>

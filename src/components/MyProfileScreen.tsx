@@ -68,9 +68,9 @@ export default function MyProfileScreen({ currentUser, viewedPerson, onBack }: M
             <div className="flex flex-col md:flex-row md:items-end justify-between">
 
                 {/* Profile Pic & Name */}
-                <div className="flex flex-col md:flex-row md:items-end gap-4 -mt-16 relative z-10">
+                <div className="flex flex-col md:flex-row md:items-end gap-4 -mt-12 md:-mt-16 relative z-10">
                     {/* Profile Picture */}
-                    <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-background bg-surface-container-highest flex items-center justify-center shrink-0">
+                    <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-background bg-surface-container-highest flex items-center justify-center shrink-0 mx-auto md:mx-0">
                         <img
                             src="https://cdn.shopify.com/s/files/1/1038/7203/7203/files/placeholder_profile_player_male.png?v=1784405789"
                             alt="Profile"
@@ -95,28 +95,28 @@ export default function MyProfileScreen({ currentUser, viewedPerson, onBack }: M
                 </div>
 
                 {/* Actions (Facebook Style) */}
-                <div className="flex justify-center md:justify-end gap-2 mt-4 md:mb-2 md:mt-0">
+                <div className="flex flex-col sm:flex-row w-full sm:w-auto justify-center md:justify-end gap-2 mt-4 md:mb-2 md:mt-0">
                     {isOwnProfile ? (
                         <>
-                            <button className="bg-tertiary text-black hover:brightness-110 px-4 py-2 rounded-md font-bold text-sm flex items-center gap-2 transition-colors">
+                            <button className="bg-tertiary text-black hover:brightness-110 px-4 py-2 rounded-md font-bold text-sm flex items-center justify-center gap-2 transition-colors w-full sm:w-auto">
                                 <Plus className="w-4 h-4" /> Add to Story
                             </button>
-                            <button className="bg-surface-container-low hover:bg-surface-container-highest text-white border border-[#2A2A2A] px-4 py-2 rounded-md font-bold text-sm flex items-center gap-2 transition-colors">
+                            <button className="bg-surface-container-low hover:bg-surface-container-highest text-white border border-[#2A2A2A] px-4 py-2 rounded-md font-bold text-sm flex items-center justify-center gap-2 transition-colors w-full sm:w-auto">
                                 <Edit2 className="w-4 h-4" /> Edit profile
                             </button>
                         </>
                     ) : (
-                        <>
-                            <button className="bg-tertiary text-black hover:brightness-110 px-4 py-2 rounded-md font-bold text-sm flex items-center gap-2 transition-colors">
+                        <div className="flex gap-2 w-full sm:w-auto">
+                            <button className="flex-1 sm:flex-none bg-tertiary text-black hover:brightness-110 px-4 py-2 rounded-md font-bold text-sm flex items-center justify-center gap-2 transition-colors">
                                 <UserPlus className="w-4 h-4" /> Follow
                             </button>
-                            <button className="bg-surface-container-low hover:bg-surface-container-highest text-white border border-[#2A2A2A] px-4 py-2 rounded-md font-bold text-sm flex items-center gap-2 transition-colors">
+                            <button className="flex-1 sm:flex-none bg-surface-container-low hover:bg-surface-container-highest text-white border border-[#2A2A2A] px-4 py-2 rounded-md font-bold text-sm flex items-center justify-center gap-2 transition-colors">
                                 <MessageCircle className="w-4 h-4" /> Message
                             </button>
                             <button className="bg-surface-container-low hover:bg-surface-container-highest text-white border border-[#2A2A2A] px-3 py-2 rounded-md transition-colors">
                                 <MoreHorizontal className="w-5 h-5" />
                             </button>
-                        </>
+                        </div>
                     )}
                 </div>
             </div>
@@ -125,7 +125,7 @@ export default function MyProfileScreen({ currentUser, viewedPerson, onBack }: M
             <div className="h-[1px] bg-[#2A2A2A] mt-6 mb-1 hidden md:block"></div>
 
             {/* Scrollable Tabs row */}
-            <div className="flex overflow-x-auto no-scrollbar gap-1 mt-4 md:mt-0 px-2 md:px-0">
+            <div className="flex overflow-x-auto no-scrollbar gap-2 mt-4 md:mt-0 px-2 md:px-0 shrink-0 w-full">
                 <button
                     onClick={() => setActiveTab('about')}
                     className={`py-3 px-4 font-bold text-sm rounded-md transition-colors whitespace-nowrap ${
