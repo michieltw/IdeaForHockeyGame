@@ -68,7 +68,7 @@ export default function StatsScreen({ onBack }: StatsScreenProps) {
 
       <div className="flex-1 overflow-y-auto p-4 max-w-4xl mx-auto w-full flex flex-col gap-6 pt-6 pb-12">
         {/* Tabs */}
-        <div className="flex bg-[#050505] border border-[#2A2A2A] rounded-lg p-1">
+        <div className="flex overflow-x-auto no-scrollbar gap-1 bg-[#050505] border border-[#2A2A2A] rounded-lg p-1">
           <button
             onClick={() => setActiveTab('standings')}
             className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md font-mono text-xs font-bold uppercase tracking-widest transition-colors ${
@@ -109,7 +109,7 @@ export default function StatsScreen({ onBack }: StatsScreenProps) {
             {error}
           </div>
         ) : (
-          <div className="bg-surface-container-low metallic-border rounded-lg overflow-x-auto inner-glow">
+          <div className="bg-surface-container-low metallic-border rounded-lg overflow-x-auto scrollbar-none -mx-4 px-4 md:mx-0 md:px-0 inner-glow">
             {activeTab === 'standings' && standings.length > 0 && (
               <table className="w-full text-left border-collapse">
                 <thead>
