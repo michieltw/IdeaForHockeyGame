@@ -1,5 +1,6 @@
 import { dbSchema } from '../types';
 import { getGasUrl } from '../utils/gasUrl';
+import { fetchGasData } from '../utils/fetchGas';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Trophy, Users, Loader2 } from 'lucide-react';
 
@@ -30,8 +31,8 @@ export default function StatsScreen({ onBack }: StatsScreenProps) {
 
       try {
         const [standingsRes, statsRes] = await Promise.all([
-          fetch(`${gasUrl}`, { method: 'POST', body: JSON.stringify({ action: 'getStandings' }) }),
-          fetch(`${gasUrl}`, { method: 'POST', body: JSON.stringify({ action: 'getStats' }) })
+          fetchGasData(`${gasUrl}`, { action: 'getStandings' }),
+          fetchGasData(`${gasUrl}`, { action: 'getStats' })
         ]);
 
         const standingsData = await standingsRes.json();

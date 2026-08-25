@@ -2,6 +2,7 @@ import { dbSchema } from '../../types';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Globe, Database, Building2, MapPin, CalendarDays, Shield, Plus, RefreshCw } from 'lucide-react';
 import { getGasUrl } from '../../utils/gasUrl';
+import { fetchGasData } from '../../utils/fetchGas';
 
 interface EcosystemScreenProps {
   onBack: () => void;
@@ -16,7 +17,7 @@ function useEcosystemData(sheetName: string) {
     fetchData();
   }, [sheetName]);
 
-  const fetchData = async () => {
+  const fetchData = async (forceRefresh = false) => {
     setLoading(true);
     setError(null);
     try {
@@ -25,10 +26,7 @@ function useEcosystemData(sheetName: string) {
         throw new Error("No database URL set. Please connect in Database settings.");
       }
 
-      const res = await fetch(url, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'getEcosystemData', sheetName }),
-      });
+      const res = await fetchGasData(url, { action: 'getEcosystemData', sheetName }, forceRefresh);
       const result = await res.json();
       if (result.status === 'Success' && result.data) {
         setData(result.data);
@@ -54,13 +52,10 @@ function useEcosystemData(sheetName: string) {
       const url = getGasUrl();
       if (!url) throw new Error("No database URL set.");
 
-      const res = await fetch(url, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'saveEcosystemData', sheetName, rowData }),
-      });
+      const res = await fetchGasData(url, { action: 'saveEcosystemData', sheetName, rowData });
       const result = await res.json();
       if (result.status === 'Success') {
-        fetchData();
+        fetchData(true);
       } else {
         throw new Error(result.error || 'Failed to save data');
       }
@@ -128,7 +123,7 @@ export default function EcosystemScreen({ onBack }: EcosystemScreenProps) {
             </h2>
             <div className="flex gap-2">
               <button
-                onClick={fetchData}
+                onClick={() => fetchData(true)}
                 disabled={loading}
                 className="bg-[#2A2A2A] hover:bg-[#333] text-white p-2 rounded transition-colors disabled:opacity-50"
                 title="Refresh Data"

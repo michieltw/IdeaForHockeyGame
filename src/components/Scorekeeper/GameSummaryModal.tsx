@@ -1,4 +1,5 @@
 import { getGasUrl } from '../../utils/gasUrl';
+import { clearGasCache } from '../../utils/fetchGas';
 import { useState, useEffect } from 'react';
 import { GameState, GameEvent, GameSettings } from '../../types';
 import { Award, Download, Trash2, X, CheckCircle, RefreshCw, MapPin, Users, Tag } from 'lucide-react';
@@ -223,6 +224,9 @@ export default function GameSummaryModal({
           mode: 'no-cors',
           body: JSON.stringify({ action: 'saveGame', logs, game, newSchema: { games: [{ id: game.GameID || Date.now().toString(), season_id: "current", home_team_id: game.HomeTeam, away_team_id: game.AwayTeam, home_score: game.HomeScore, away_score: game.AwayScore, status: "completed" }], game_events: logs.map(l => ({ id: Date.now().toString() + Math.random(), game_id: game.GameID || Date.now().toString(), period: "1", time_elapsed: l.Timestamp, trigger_event_type: l.EventType, trigger_team_id: l.Team, description: l.Description, x_coordinate: l.X, y_coordinate: l.Y })) }, token: import.meta.env.VITE_GAS_TOKEN })
         });
+
+        // Clear cache so that Stats and Standings update with the new game
+        clearGasCache();
       } catch (err) {
         console.error("Failed to push to database:", err);
       }
