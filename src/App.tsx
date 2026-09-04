@@ -9,6 +9,7 @@ import StatsScreen from './components/StatsScreen';
 import EcosystemScreen from './components/Ecosystem/EcosystemScreen';
 import MyProfileScreen from './components/MyProfileScreen';
 import PeopleDirectoryScreen from './components/PeopleDirectoryScreen';
+import PlayersScreen from './components/PlayersScreen';
 import TeamProfileScreen from './components/TeamProfileScreen';
 import RosterBuilderScreen from './components/RosterBuilderScreen';
 import FreeAgencyScreen from './components/FreeAgencyScreen';
@@ -112,6 +113,9 @@ export default function App() {
         </button>
         <button onClick={() => navigateTo('people-directory')} className={`flex items-center gap-3 p-3 rounded hover:bg-white/5 transition-colors ${currentScreen === 'people-directory' ? 'bg-white/10 text-white' : ''}`}>
           People Directory
+        </button>
+        <button onClick={() => navigateTo('players')} className={`flex items-center gap-3 p-3 rounded hover:bg-white/5 transition-colors ${currentScreen === 'players' ? 'bg-white/10 text-white' : ''}`}>
+          Players
         </button>
 
         <div className="my-2 border-t border-[#2A2A2A]"></div>
@@ -316,6 +320,10 @@ export default function App() {
 
               {currentScreen === 'people-directory' && (
                 <PeopleDirectoryScreen onBack={() => setCurrentScreen('main-menu')} onViewPerson={(person) => { setViewedPerson(person); setCurrentScreen('my-profile'); }} />
+              )}
+
+              {currentScreen === 'players' && (
+                <PlayersScreen onBack={() => setCurrentScreen('main-menu')} />
               )}
 
               {currentScreen === 'ecosystem' && (
